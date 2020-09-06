@@ -12,16 +12,17 @@ WINDOWS电脑建议安装系统自带的Ubuntu Linux系统，cd /mnt/d/。下载
 写一个 VIP.fields.txt 文件，列出想提取的变量和对应的 data-field，比如 21022 age
 
 ```
-awk '{print $1}' VIP.fields.txt > VIP.fields.ids
 unkunpack ukb42156.enc 【数据密码】
-ukbconv ukb42156.enc_ukb r -iVIP.fields.ids -oVIP
+awk '{print $1}' ukb.vip.fields > ukb.vip.fields.id
+sort ukb.vip.fields.id | uniq -d
+ukbconv ukb42156.enc_ukb r -iukb.vip.fields.id -ovip
 ```
 
-打开R ，用下面的几行代码，将上面生成的VIP.tab 数据读入，并且给每个变量赋予正确的名字。
-下面的XXXX是文件路径，上述Linux 系统生成的 VIP.r文件，如果在Windows 系统里面运行R，需要修改文件的路径。
+打开R ，用下面的几行代码，将上面生成的 vip.tab 数据读入，并且给每个变量赋予正确的名字。
+下面的XXXX是文件路径，上述Linux 系统生成的 vip.r文件，如果在Windows 系统里面运行R，需要修改文件的路径。
 
 ```
-source("D:/XXXX/VIP.r")
+source("D:/XXXX/vip.r")
 pnames <- read.table("D:/XXXX/ukb.vip.fields", header=F)
 pnames$V1 <- paste0("f.", pnames$V1, ".0.0")
 phe <- subset(bd, select=grep("f.eid|\\.0\\.0", names(bd)))

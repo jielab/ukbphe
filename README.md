@@ -40,7 +40,7 @@ ukbconv ukb42156.enc_ukb r -s42170 -oicd
 sed -i ‘s/”//g’ icd.tab
 
 # 将 icd.tab 文件整合为两列，便于读入R。在 sed 命令中加上 -e 's/\t-\w\+//g' 去掉负数。
-cat icd.tab | sed -e 's/\tNA//g' -e 's/\t/,/2g' | awk '{ if(NR==1) print "IID\ticd10"; else if (NF==1) print $1 "\tNA"; else print $0 }' > icd.2cols
+cat icd.tab | sed -e 's/\tNA//g' -e 's/\t/,/2g' | awk '{ if(NR==1) print "IID\ticd10"; else if (NF==1) print $1 "\tNA"; else print $0"," }' > icd.2cols
 
 # 从 ICD.2cols 文件里面提取某一个变量，比如 bipolar（对应的ICD-10代码F31），用R读入数据后，生成一个 0/1/NA 变量。
 phe$icd_bipolar = ifelse(“F31”, phe$icd10), 1, ifelse(“F”, phe$icd10), NA, 0))

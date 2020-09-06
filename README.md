@@ -58,13 +58,13 @@ for (i in 1:nrow(ICDnames)) {
 
 
 ```
-	echo “41270\n41280” > vip.fields.txt
-	ukbconv ukb42156.enc_ukb r -ivip.fields.txt -oicd-date
-	sed -i ‘s/”//g’ icd-date.tab
+echo “41270\n41280” > vip.fields.txt
+ukbconv ukb42156.enc_ukb r -ivip.fields.txt -oicd-date
+sed -i ‘s/”//g’ icd-date.tab
 
 # 提取单个ICD 的Date, 比如COPD  (代码J440，不是J44) 。
-	cnt=`head -1 icd-date.tab | awk '{printf NF}'` # 找出列数
-	awk -v cn=$cnt  -v co="J440" '{if (NR==1) print "IID", co; else {c=(cn-1)/2; printf $1;  for (i=2; i<=(c+1); i++) { if ($i==co) printf " "$(i+c) } printf "\n"  }}' icd-date.tab | awk ‘NF==2’ > icd-date.2cols
+cnt=`head -1 icd-date.tab | awk '{printf NF}'` # 找出列数
+awk -v cn=$cnt  -v co="J440" '{if (NR==1) print "IID", co; else {c=(cn-1)/2; printf $1;  for (i=2; i<=(c+1); i++) { if ($i==co) printf " "$(i+c) } printf "\n"  }}' icd-date.tab | awk ‘NF==2’ > icd-date.2cols
 
 # 对于有一个不同的ICD-Date 的表型，比如 dementia 有5个ICD 代码“F00|F01|F02|F03|G30”，可以按照上述方法分别生成5个文件，比如 icdDate.F00.2cols, icdDate.F01.2cols，等。然后在R里面合并这些文件，并找出每人的最小的日期。  
 
@@ -77,8 +77,8 @@ for (i in 1:nrow(ICDnames)) {
 对于疾病的binary 表型，只需要把需要 adjust 的covarites 和表型数据放在同一个表型数据文件里面，然后在 GWAS里面的命令指明哪个是表型，哪些是 covariates。
 
 ```
-	trait_res = residuals(lm(trait ~ age+sex+PC1+PC2, na.action=na.exclude)
-	trait_inv = qnorm((rank(trait_res,na.last="keep")-0.5) / length(na.omit(trait_res)))
+trait_res = residuals(lm(trait ~ age+sex+PC1+PC2, na.action=na.exclude)
+trait_inv = qnorm((rank(trait_res,na.last="keep")-0.5) / length(na.omit(trait_res)))
 ```
 
 
@@ -129,12 +129,14 @@ done
 
 
 #7.1.	SNP频率和基本注解查询
-	GnomAD https://gnomad.broadinstitute.org
-
+```
+GnomAD https://gnomad.broadinstitute.org
+```
 
 #7.2.	GWAS数据的功能性注释
- post-GWAS analysis pipeline (github.com/Ensembl/postgap).
-
+```
+post-GWAS analysis pipeline (github.com/Ensembl/postgap).
+```
 
 #7.3.	多个GWAS 之间的 genetic correlation 分析, LDSC (https://github.com/bulik/ldsc)
 
@@ -150,9 +152,11 @@ done
 ```
 
 
-#7.4.	多基因风险评分PRS：
- PRSice: https://github.com/choishingwan/PRSice
- LDpred2 https://privefl.github.io/bigsnpr/articles/LDpred2.html
+#7.4.	多基因风险评分PRS
+```
+PRSice: https://github.com/choishingwan/PRSice
+LDpred2 https://privefl.github.io/bigsnpr/articles/LDpred2.html
+```
 
 
 #7.5.	因果分析 Mendelian Randomization，GSMR （https://cnsgenomics.com/software/gsmr/
@@ -187,9 +191,11 @@ done
 ```
 
 
-# #8. 参考文献：
-# 2018. Adult height and risk of 50 diseases: a combined epidemiological and genetic analysis
-# 2019, JACC, Genome-Wide Assessment for Resting Heart Rate and Shared Genetics With Cardiometabolic Traits and Type 2 Diabetes
+# #8. 参考文献
+```
+2018. Adult height and risk of 50 diseases: a combined epidemiological and genetic analysis
+2019, JACC, Genome-Wide Assessment for Resting Heart Rate and Shared Genetics With Cardiometabolic Traits and Type 2 Diabetes
 Genome Wide Assessment of Shared Genetic Architecture Between Rheumatoid Arthritis and Cardiovascular Diseases Using the UK Biobank Data 
-# 2019 JAMA. Association of Lifestyle and Genetic Risk With Incidence of Dementia
+2019 JAMA. Association of Lifestyle and Genetic Risk With Incidence of Dementia
+```
 

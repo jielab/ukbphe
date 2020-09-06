@@ -85,9 +85,10 @@ for (i in 1:nrow(ICDnames)) {
 # #5. GWAS 运行
 目前GWAS 由专人负责运行，以下链接可以随时下载公开的GWAS数据
 
+```
 Cardiovascular disease genomics http://www.broadcvdi.org/
 fastgwa.info
-
+```
 
 # #6. GWAS 后续常规分析 
 
@@ -130,20 +131,60 @@ done
 #7.1.	SNP频率和基本注解查询
 	GnomAD https://gnomad.broadinstitute.org
 
+
 #7.2.	GWAS数据的功能性注释
  post-GWAS analysis pipeline (github.com/Ensembl/postgap).
 
-#7.3.	多个GWAS 之间的 genetic correlation 分析
-	LDSC (https://github.com/bulik/ldsc)
+
+#7.3.	多个GWAS 之间的 genetic correlation 分析, LDSC (https://github.com/bulik/ldsc)
+
+```
+source activate ldsc
+for trait in $traits; do
+	zcat $dir/gwas/$trait.sumstats.gz | awk 'NF==5' | sed -e 's/\.000$//' -e 's/\t/ /g' | gzip -f > $trait.sumstats.gz 
+done
+for train in $traits; do
+    echo $trait $traits | sed -e 's/ /.sumstats.gz,/g' -e 's/$/.sumstats.gz/' | xargs -n1 -I % /mnt/d/software_lin/ldsc/ldsc.py --rg % --out $trait --ref-ld-chr $ld_dir --w-ld-chr $ld_dir
+ #   awk '$1=="Summary" {printf NR}' $trait.log | xargs -n1 -I % awk -v s=% 'FNR >=s' *.log | sed 's/.sumstats.gz//g' > $trait.ldsc.txt
+done
+```
+
 
 #7.4.	多基因风险评分PRS：
-	PRSice: https://github.com/choishingwan/PRSice
-	LDpred2 https://privefl.github.io/bigsnpr/articles/LDpred2.html
+ PRSice: https://github.com/choishingwan/PRSice
+ LDpred2 https://privefl.github.io/bigsnpr/articles/LDpred2.html
 
-#7.5.	因果分析 Mendelian Randomization，
-	GSMR （https://cnsgenomics.com/software/gsmr/
-	MendelianRandomization R package
 
+#7.5.	因果分析 Mendelian Randomization，GSMR （https://cnsgenomics.com/software/gsmr/
+```
+for trait in RHR; do
+    echo "$trait $dir/$trait.gcta.txt" > $trait.exposure
+    echo -n > $trait.outcome
+    for trait2 in $traits; do
+        if [[ $trait2 != $trait ]]; then
+            echo "$trait2 $dir/$trait2.gcta.txt" >> $trait.outcome
+        fi
+    done
+   gcta64 --bfile g1k.EUR/chr$chr --gsmr-file $trait.exposure $trait.outcome --gsmr-direction 2 --gwas-thresh 5e-8 --effect-plot --out $trait
+done
+```
+
+
+#7.6. TWAS (http://gusevlab.org/projects/fusion/)
+```
+dir_tw=/mnt/d/data/twas_data
+dir_gt=$dir_tw/GTEx_v7_multi_tissue
+dir_ld=$dir_tw/LDREF
+fusion=/mnt/d/software_lin/fusion_twas
+for trait in RHR T2D; do
+for tissue in `ls -d1 $dir_gt/*/ | sed 's/\/$//' | awk -F '/' '{print $NF}' | awk '{printf " "$1}'`; do
+for chr in 7; do
+    echo now process trait $trait, tissue $tissue, chr $chr
+    Rscript $fusion/FUSION.assoc_test.R --sumstats $dir/summary/$trait.sumstats.gz --chr $chr --out $trait.$tissue.chr$chr.txt --weights $dir_gt/$tissue.P01.pos --weights_dir $dir_gt --ref_ld_chr $dir_ld/1000G.EUR.
+done
+done
+done
+```
 
 
 参考文献：

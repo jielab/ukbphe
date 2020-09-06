@@ -1,9 +1,8 @@
-# UKB 表型数据提取以及GWAS分析流程. 
+# 表型数据提取以及GWAS分析流程. 
 
 Author: Jie Huang, MD, PhD, Department of Global Health, Peking University School of Public Health
 
 
-# Steps:
 
 # #1.  提取一般表型数据（age, sex, race, bmi, etc.）
 
@@ -83,7 +82,7 @@ for (i in 1:nrow(ICDnames)) {
  
 # #5. GWAS 后续常规分析 
 
-#5.1. 从千人基因组网站（https://www.internationalgenome.org/data）下载基因数据，作为计算SNP 之间 LD r2的参考。点击该页面 Phase 3 对应的VCF，下载所有以ALL开头的文件。可将下载后的VCF文件的名字改短为ALL.chr*.gz 这样的名字。然后用 PLINK 将 VCF格式转换为 PLINK格式 
+#5.1. 从千人基因组网站（https://www.internationalgenome.org/data）下载基因数据，作为LD计算的参考。点击该页面 Phase 3 对应的VCF，下载所有以ALL开头的文件。可将下载后的VCF文件的名字改短为ALL.chr*.gz 这样的名字。然后用 PLINK 将 VCF格式转换为 PLINK格式 
 
 ```
 for chr in {1..22}; do
@@ -112,9 +111,34 @@ done
  
 # #6. GWAS的深度分析 
 
-#6.1. fastgwa.info 上下载任意 GWAS数据，进行测试。
-#6.2.	GWAS数据的功能性注释，参照 post-GWAS analysis pipeline (github.com/Ensembl/postgap).
-#6.3.	多个GWAS 之间的 genetic correlation 分析，请使用LDSC (https://github.com/bulik/ldsc)
-#6.4.	多基因风险评分PRS，参考 LDpred2 https://privefl.github.io/bigsnpr/articles/LDpred2.html
-#6.5.	因果分析 Mendelian Randomization，参考 GSMR （https://cnsgenomics.com/software/gsmr/）和 MendelianRandomization R package
-#6.6.	SNP频率，参考 GnomAD https://gnomad.broadinstitute.org
+
+#6.2.	GWAS数据的功能性注释
+ post-GWAS analysis pipeline (github.com/Ensembl/postgap).
+
+#6.3.	多个GWAS 之间的 genetic correlation 分析
+	LDSC (https://github.com/bulik/ldsc)
+
+#6.4.	多基因风险评分PRS：
+	PRSice: https://github.com/choishingwan/PRSice
+	LDpred2 https://privefl.github.io/bigsnpr/articles/LDpred2.html
+
+#6.5.	因果分析 Mendelian Randomization，
+	GSMR （https://cnsgenomics.com/software/gsmr/
+	MendelianRandomization R package
+
+#6.6.	SNP频率
+	GnomAD https://gnomad.broadinstitute.org
+
+
+公开的GWAS数据
+*. Cardiovascular disease genomics http://www.broadcvdi.org/
+*. fastgwa.info 上下载任意 GWAS数据，进行测试。
+
+
+
+参考文献：
+	2018. Adult height and risk of 50 diseases: a combined epidemiological and genetic analysis
+	2019, JACC, Genome-Wide Assessment for Resting Heart Rate and Shared Genetics With Cardiometabolic Traits and Type 2 Diabetes
+Genome Wide Assessment of Shared Genetic Architecture Between Rheumatoid Arthritis and Cardiovascular Diseases Using the UK Biobank Data 
+	2019 JAMA. Association of Lifestyle and Genetic Risk With Incidence of Dementia
+

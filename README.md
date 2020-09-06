@@ -194,8 +194,10 @@ done
 # #8. 参考文献
 ```
 2018. Adult height and risk of 50 diseases: a combined epidemiological and genetic analysis
-2019, JACC, Genome-Wide Assessment for Resting Heart Rate and Shared Genetics With Cardiometabolic Traits and Type 2 Diabetes
+ 
+2019. JACC. Genome-Wide Assessment for Resting Heart Rate and Shared Genetics With Cardiometabolic Traits and Type 2 Diabetes
 Genome Wide Assessment of Shared Genetic Architecture Between Rheumatoid Arthritis and Cardiovascular Diseases Using the UK Biobank Data 
-2019 JAMA. Association of Lifestyle and Genetic Risk With Incidence of Dementia
+
+2019. JAMA. Association of Lifestyle and Genetic Risk With Incidence of Dementia
 ```
 

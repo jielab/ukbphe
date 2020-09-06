@@ -12,19 +12,19 @@ WINDOWS电脑建议安装系统自带的Ubuntu Linux系统，cd /mnt/d/。下载
 写一个 VIP.fields.txt 文件，列出想提取的变量和对应的 data-field，比如 21022 age
 
 ```
- awk '{print $1}' VIP.fields.txt > VIP.fields.ids
- unkunpack ukb42156.enc 【数据密码】
- ukbconv ukb42156.enc_ukb r -iVIP.fields.ids -oVIP
+awk '{print $1}' VIP.fields.txt > VIP.fields.ids
+unkunpack ukb42156.enc 【数据密码】
+ukbconv ukb42156.enc_ukb r -iVIP.fields.ids -oVIP
 ```
 
 打开R ，用下面的几行代码，将上面生成的VIP.tab 数据读入，并且给每个变量赋予正确的名字。
 下面的XXXX是文件路径，上述Linux 系统生成的 VIP.r文件，如果在Windows 系统里面运行R，需要修改文件的路径。
 
 ```
-	source("D:/XXXX/VIP.r")
-	pnames <- read.table("D:/XXXX/ukb.vip.fields", header=F)
-	pnames$V1 <- paste0("f.", pnames$V1, ".0.0")
-	phe <- subset(bd, select=grep("f.eid|\\.0\\.0", names(bd)))
+source("D:/XXXX/VIP.r")
+pnames <- read.table("D:/XXXX/ukb.vip.fields", header=F)
+pnames$V1 <- paste0("f.", pnames$V1, ".0.0")
+phe <- subset(bd, select=grep("f.eid|\\.0\\.0", names(bd)))
 
 ```
 
@@ -187,9 +187,9 @@ done
 ```
 
 
-参考文献：
-	2018. Adult height and risk of 50 diseases: a combined epidemiological and genetic analysis
-	2019, JACC, Genome-Wide Assessment for Resting Heart Rate and Shared Genetics With Cardiometabolic Traits and Type 2 Diabetes
+# #8. 参考文献：
+# 2018. Adult height and risk of 50 diseases: a combined epidemiological and genetic analysis
+# 2019, JACC, Genome-Wide Assessment for Resting Heart Rate and Shared Genetics With Cardiometabolic Traits and Type 2 Diabetes
 Genome Wide Assessment of Shared Genetic Architecture Between Rheumatoid Arthritis and Cardiovascular Diseases Using the UK Biobank Data 
-	2019 JAMA. Association of Lifestyle and Genetic Risk With Incidence of Dementia
+# 2019 JAMA. Association of Lifestyle and Genetic Risk With Incidence of Dementia
 

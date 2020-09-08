@@ -113,11 +113,11 @@ awk '$3=="EUR" {print $1,$1}' integrated_call_samples_v3.20130502.ALL.panel > g1
 awk '$3=="EAS" {print $1,$1}' integrated_call_samples_v3.20130502.ALL.panel > g1k.EAS.keep
 
 然后可以用 PLINK生成某一个特定人种的基因数据。下面的这个PLINK命令，可以写到上面的 PLINK 命令的下面，就不用写两次 "for chr in {1..22}" 了。
+当然，也可以不用单独生成每个人种的 PLINK格式 基因数据，直接用一个包含所有样本的基因数据就可以了，只需要记住在相关的命令里面再写上 --keep g1k.EUR.keep（或对应的人种）。
 for chr in {1..22}; do
   plink --bfile chr$chr --keep g1k.EUR.keep --make-bed --out g1k.EUR
 done
 
-当然，也可以不用单独生成每个人种的 PLINK格式 基因数据，直接用一个包含所有样本的基因数据就可以了，只需要记住在相关的命令里面再写上 --keep g1k.EUR.keep 或者 --keep g1k.EAS.keep
 
 ```
 

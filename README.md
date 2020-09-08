@@ -67,7 +67,8 @@ sed -i ‘s/”//g’ icd-date.tab
 cnt=`head -1 icd-date.tab | awk '{printf NF}'` # 找出列数
 awk -v cn=$cnt  -v co="J440" '{if (NR==1) print "IID", co; else {c=(cn-1)/2; printf $1;  for (i=2; i<=(c+1); i++) { if ($i==co) printf " "$(i+c) } printf "\n"  }}' icd-date.tab | awk ‘NF==2’ > icd-date.2cols
 
-# 对于有一个不同的ICD-Date 的表型，比如 dementia 有5个ICD 代码“F00|F01|F02|F03|G30”，可以按照上述方法分别生成5个文件，比如 icdDate.F00.2cols, icdDate.F01.2cols，等。然后在R里面合并这些文件，并找出每人的最小的日期。  
+# 对于有一个不同的ICD-Date 的表型，比如 dementia 有5个ICD 代码“F00|F01|F02|F03|G30”，可以按照上述方法分别生成5个文件，比如 icdDate.F00.2cols, icdDate.F01.2cols，等。
+然后在R里面合并这些文件，并找出每人的最小的日期。  
 
 ```
 
@@ -98,7 +99,8 @@ fastgwa.info
 之所有不简称为 1kg，是因为有的软件要求变量不能以数字开头。
 
 ```
-打开 https://www.internationalgenome.org/data，在 Available data 下面，点击该页面 Phase 3 对应的 VCF 链接，可以看到以 “ALL.” 开头的文件，可以一个一个直接点击链接下载，也可以用下面的命令下载, 并且随之将下载的VCF文件转换为PLINK格式
+打开 https://www.internationalgenome.org/data，在 Available data 下面，点击该页面 Phase 3 对应的 VCF 链接，可以看到以 “ALL.” 开头的文件，可以一个一个直接点击链接下载。
+也可以用下面的命令下载, 并且随之将下载的VCF文件转换为PLINK格式
 
 由于 chrX, chrY, chrMT 的文件名字跟其它染色体不同，用下面的命令下载的时候，里面的文件名字也需要相应调整。 
 
@@ -174,7 +176,8 @@ for trait in $traits; do
 	zcat $dir/gwas/$trait.sumstats.gz | awk 'NF==5' | sed -e 's/\.000$//' -e 's/\t/ /g' | gzip -f > $trait.sumstats.gz 
 done
 for train in $traits; do
-    echo $trait $traits | sed -e 's/ /.sumstats.gz,/g' -e 's/$/.sumstats.gz/' | xargs -n1 -I % /mnt/d/software_lin/ldsc/ldsc.py --rg % --out $trait --ref-ld-chr $ld_dir --w-ld-chr $ld_dir
+    echo $trait $traits | sed -e 's/ /.sumstats.gz,/g' -e 's/$/.sumstats.gz/' | \
+    	xargs -n1 -I % /mnt/d/software_lin/ldsc/ldsc.py --rg % --out $trait --ref-ld-chr $ld_dir --w-ld-chr $ld_dir
  #   awk '$1=="Summary" {printf NR}' $trait.log | xargs -n1 -I % awk -v s=% 'FNR >=s' *.log | sed 's/.sumstats.gz//g' > $trait.ldsc.txt
 done
 ```
@@ -191,7 +194,7 @@ LDpred2 https://privefl.github.io/bigsnpr/articles/LDpred2.html
 #7.5.	因果分析 Mendelian Randomization，GSMR (https://cnsgenomics.com/software/gcta/#GSMR)
 
 GTCA 里面的 GSMR也需要用到上述提取的 g1k 基因数据作为 计算LD 的参考。
-由于上述的 gak 数据是按照染色体分开的20多个数据，这个时候就需要用 --mbile （而不是 --bfile）来表明需要读取多个（multiple）bfile.
+由于上述的 gak 数据是按照染色体分开的20多个数据，这个时候就需要用 --mbile （而不是 --bfile）来表明需要读取多个（multiple）bfile。
 可以用这个命令生成一个 bfile.list 然后用到下面的命令里： seq 1 22 | xargs -n1 -I % echo chr% > bfile.list
 
 ```
@@ -219,7 +222,8 @@ for trait in RHR T2D; do
 for tissue in `ls -d1 $dir_gt/*/ | sed 's/\/$//' | awk -F '/' '{print $NF}' | awk '{printf " "$1}'`; do
 for chr in 7; do
     echo now process trait $trait, tissue $tissue, chr $chr
-    Rscript $fusion/FUSION.assoc_test.R --sumstats $dir/summary/$trait.sumstats.gz --chr $chr --out $trait.$tissue.chr$chr.txt --weights $dir_gt/$tissue.P01.pos --weights_dir $dir_gt --ref_ld_chr $dir_ld/1000G.EUR.
+    Rscript $fusion/FUSION.assoc_test.R --sumstats $dir/summary/$trait.sumstats.gz --chr $chr --out $trait.$tissue.chr$chr.txt \ 
+    	--weights $dir_gt/$tissue.P01.pos --weights_dir $dir_gt --ref_ld_chr $dir_ld/1000G.EUR.
 done
 done
 done

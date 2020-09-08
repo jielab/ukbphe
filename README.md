@@ -94,19 +94,39 @@ fastgwa.info
 # #6. GWAS 后续常规分析 
 
 
-#6.1. 从千人基因组网站下载基因数据 https://www.internationalgenome.org/data 作为LD计算的参考。点击该页面 Phase 3 对应的VCF，下载所有以ALL开头的文件。可将下载后的VCF文件的名字改短为ALL.chr*.gz 这样的名字。然后用 PLINK 将 VCF格式转换为 PLINK格式 
+#6.1. 从千人基因组网站下载基因数据 https://www.internationalgenome.org/data 作为LD计算的参考。
 
 ```
+在 Available data 下面，点击该页面 Phase 3 对应的 VCF 链接，可以看到以 “ALL.” 开头的文件，可以一个一个直接点击链接下载，也可以用下面的命令下载, 并且随之将下载的VCF文件转换为PLINK格式
+
+由于 chrX, chrY, chrMT 的文件名字跟其它染色体不同，用下面的命令下载的时候，里面的文件名字也需要相应调整。 
+
 for chr in {1..22}; do
   wget ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr$chr.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
   wget ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr$chr.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz.tbi
   plink --vcf ALL.chr$chr.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz --make-bed --out chr$chr
 done  
+
+除了下载上述页面上以 “ALL.” 开头的 VCF 文件，倒数第二个 integrated_call_samples_v3.20130502.ALL.panel 文件罗列了每一个样本的人群（pop）和人种 (super_pop)，以及性别。
+根据这个文件，可以提取特定人种的样本，比如：
+awk '$3=="EUR" {print $1,$1}' integrated_call_samples_v3.20130502.ALL.panel > g1k.EUR.keep
+awk '$3=="EAS" {print $1,$1}' integrated_call_samples_v3.20130502.ALL.panel > g1k.EAS.keep
+
+然后可以用 PLINK生成某一个特定人种的基因数据。下面的这个PLINK命令，可以写到上面的 PLINK 命令的下面，就不用写两次 "for chr in {1..22}" 了。
+for chr in {1..22}; do
+  plink --bfile chr$chr --keep g1k.EUR.keep --make-bed --out g1k.EUR
+done
+
+当然，也可以不用单独生成每个人种的 PLINK格式 基因数据，直接用一个包含所有样本的基因数据就可以了，只需要记住在相关的命令里面再写上 --keep g1k.EUR.keep 或者 --keep g1k.EAS.keep
+
 ```
 
 
 #6.2. 提取 significant 信号，添加简单的注释
-	plink --annotate MY.gwas.txt NA attrib=snp129.attrib.txt ranges=glist-hg19 --border 10 --pfilter 5e-8 --out MY.gwas.top
+
+```
+plink --annotate MY.gwas.txt NA attrib=snp129.attrib.txt ranges=glist-hg19 --border 10 --pfilter 5e-8 --out MY.gwas.top
+```
 
 
 #6.3. 提取 signifianct & independent 信号
@@ -117,6 +137,7 @@ for chr in {1..22}; do
   plink --bfile chr$chr --clump Height.2018.txt --clump-p1 1e-08 --clump-p2 1e-8 --clump-kb 1000 --clump-r2 0 --out chr$chr
 done  
 ```
+
 
 #6.4. 用上述方法生成一个比较小的文件，用R里面的qqman package，或者我写的mhplot.R代码，绘制Manhattan plot，也可以绘制QQ plot（不太常用）。
 

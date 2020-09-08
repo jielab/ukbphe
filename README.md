@@ -40,7 +40,9 @@ ukbconv ukb42156.enc_ukb r -s42170 -oicd
 sed -i 's/"//g icd.tab
 
 # 将 icd.tab 文件整合为两列，便于读入R。最后的 sed 命令将全部负数的人的记录替换成 "n"。
-cat icd.tab | sed -e 's/\tNA//g' -e 's/\t/,/2g' | awk '{ if(NR==1) print "IID icd"; else if (NF==1) print $1 " NA"; else print $0"," }' | sed -e 's/-\w\+,/n/g' -e 's/n\+/n/g' > icd.2cols
+cat icd.tab | sed -e 's/\tNA//g' -e 's/\t/,/2g' | \
+awk '{ if(NR==1) print "IID icd"; else if (NF==1) print $1 " NA"; else print $0"," }' | \
+sed -e 's/-\w\+,/n/g' -e 's/n\+/n/g' > icd.2cols
 
 # 从 ICD.2cols 文件里面提取某一个变量，比如 bipolar（对应的ICD-10代码F31），用R读入数据后，生成一个 0/1/NA 变量。
 phe$icd_bipolar = ifelse("F31", phe$icd10), 1, ifelse(“F”, phe$icd10), NA, 0))
@@ -65,7 +67,8 @@ sed -i ‘s/”//g’ icd-date.tab
 
 # 提取单个ICD 的Date, 比如COPD  (代码J440，不是J44) 。
 cnt=`head -1 icd-date.tab | awk '{printf NF}'` # 找出列数
-awk -v cn=$cnt  -v co="J440" '{if (NR==1) print "IID", co; else {c=(cn-1)/2; printf $1;  for (i=2; i<=(c+1); i++) { if ($i==co) printf " "$(i+c) } printf "\n"  }}' icd-date.tab | awk ‘NF==2’ > icd-date.2cols
+awk -v cn=$cnt -v co="J440" '{if (NR==1) print "IID", co; else {c=(cn-1)/2; printf $1;  
+    for (i=2; i<=(c+1); i++) { if ($i==co) printf " "$(i+c) } printf "\n"  }}' icd-date.tab | awk ‘NF==2’ > icd-date.2cols
 
 # 对于有一个不同的ICD-Date 的表型，比如 dementia 有5个ICD 代码“F00|F01|F02|F03|G30”，可以按照上述方法分别生成5个文件，比如 icdDate.F00.2cols, icdDate.F01.2cols，等。
 然后在R里面合并这些文件，并找出每人的最小的日期。  

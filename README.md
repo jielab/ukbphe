@@ -200,7 +200,10 @@ LDpred2 https://privefl.github.io/bigsnpr/articles/LDpred2.html
 
 GTCA 里面的 GSMR也需要用到上述提取的 g1k 基因数据作为 计算LD 的参考。
 由于上述的 gak 数据是按照染色体分开的20多个数据，这个时候就需要用 --mbile （而不是 --bfile）来表明需要读取多个（multiple）bfile。
-可以用这个命令生成一个 bfile.list 然后用到下面的命令里： seq 1 22 | xargs -n1 -I % echo chr% > bfile.list
+可以用这个命令生成一个 bfile.list 然后用到下面的命令里
+```
+seq 1 22 | xargs -n1 -I % echo chr% > bfile.list
+```
 
 ```
 for trait in RHR; do

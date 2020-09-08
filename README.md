@@ -125,6 +125,8 @@ for chr in {1..22}; do
 done
 
 
+其实，PLINK的网站 https://www.cog-genomics.org/plink/2.0/ 上也有 千人基因组的数据，点击左下方菜单“1000 genomes phase3” 链接，按照操作下载和处理。
+
 ```
 
 

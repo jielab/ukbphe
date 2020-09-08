@@ -125,7 +125,11 @@ for chr in {1..22}; do
 done
 
 
-其实，PLINK的网站 https://www.cog-genomics.org/plink/2.0/ 上也有 千人基因组的数据，点击左下方菜单“1000 genomes phase3” 链接，按照操作下载和处理。
+三个注意事项：
+1. 其实，PLINK的网站 https://www.cog-genomics.org/plink/2.0/ 上也有千人基因组的数据，点击左下方菜单“1000 genomes phase3” 链接，按照操作下载和处理。
+2. 不管是哪个方法得到的PLINK格式的数据，有的软件不允许 .bim 文件里面的 SNP 名字有重复，这个时候可以把原来的 .bim 文件备份一下，然后生成新的没有重复名字的 .bam 文件
+	awk '{if(array[$2]=="Y") {i++; $2=$2".DUP"i}; print $0; array[$2]="Y"}' chr1.bim.COPY > chr1.bim 
+3. g1k总共有8千多万个SNP，数据太大。如果 GSMR分析的GWAS文件总共才2百万个SNP，如果 GSMR --mbfile 命令太慢，可以考虑先用 plink --extract 命令生成一个只有那2百万个SNP的 g1k.new数据。 
 
 ```
 

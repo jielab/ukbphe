@@ -39,10 +39,9 @@ http://biobank.ndph.ox.ac.uk/showcase/field.cgi?id=131492。如果想自己动�
 ukbconv ukb42156.enc_ukb r -s42170 -oicd
 sed -i 's/"//g icd.tab
 
-# 将 icd.tab 文件整合为两列，便于读入R。最后的 sed 命令将全部负数的人的记录替换成 "n"。
+# 将 icd.tab 文件整合为两列，便于读入R。
 cat icd.tab | sed -e 's/\tNA//g' -e 's/\t/,/2g' | \
-awk '{ if(NR==1) print "IID icd"; else if (NF==1) print $1 " NA"; else print $0"," }' | \
-sed -e 's/-\w\+,/n/g' -e 's/n\+/n/g' > icd.2cols
+awk '{ if(NR==1) print "IID icd"; else if (NF==1) print $1 " NA"; else print $0"," }' > icd.2cols
 
 # 从 ICD.2cols 文件里面提取某一个变量，比如 bipolar（对应的ICD-10代码F31），用R读入数据后，生成一个 0/1/NA 变量。
 phe$icd_bipolar = ifelse("F31", phe$icd10), 1, ifelse(“F”, phe$icd10), NA, 0))
@@ -245,9 +244,14 @@ done
 ```
 
 
-# #8. 参考文献
+# #8. 参考文献和网站
 
 ```
+dbSNP: https://www.ncbi.nlm.nih.gov/snp/
+UCSC genome browser: https://www.genome.ucsc.edu/
+TopMed browser: https://bravo.sph.umich.edu/
+Gnomad browser: https://gnomad.broadinstitute.org/
+
 2018. Adult height and risk of 50 diseases: a combined epidemiological and genetic analysis
  
 2019. JACC. Genome-Wide Assessment for Resting Heart Rate and Shared Genetics With Cardiometabolic Traits and Type 2 Diabetes

@@ -32,8 +32,6 @@ phe <- subset(bd, select=grep("f.eid|\\.0\\.0", names(bd)))
 
 # #2. 提取ICD数据（data field 42170）
 
-http://biobank.ndph.ox.ac.uk/showcase/field.cgi?id=131492。如果想自己动手来弄（不建议），可以用下面的通用代码来生成。
-
 ```
 # ICD 这样的指标，包含了很多不同时间的时间点，量很大，建议分开来处理。
 ukbconv ukb42156.enc_ukb r -s42170 -oicd
@@ -56,21 +54,21 @@ for (i in 1:nrow(ICDnames)) {
 ```
 
 
-# #3. 提取ICD-Date 数据以及相对应的日期（data field 42180）
-
+# #3. 提取ICD 相对应的日期（data field 42180）
 
 ```
-echo “41270\n41280” > vip.fields.txt
-ukbconv ukb42156.enc_ukb r -ivip.fields.txt -oicd-date
-sed -i ‘s/”//g’ icd-date.tab
+## 对于绝大多数的 ICD code, UKB 里面有 First occurances 的数据，比如 http://biobank.ndph.ox.ac.uk/showcase/field.cgi?id=131492。
+## 如果想自己通过写代码来做，可以先提取ICD （data field 42170）以及相对应的日期（data field 42180）, 然后提取单个ICD 的Date, 比如COPD (代码J440，不是J44)。
+## 对 Dementia 这种有多个个ICD 代码的 (F00|F01|F02|F03|G30)，可以分别生成 icdDate.F00.2cols, icdDate.F01.2cols，等。然后在R里面合并文件并找出每人的最小日期。
 
-# 提取单个ICD 的Date, 比如COPD  (代码J440，不是J44) 。
-cnt=`head -1 icd-date.tab | awk '{printf NF}'` # 找出列数
+echo -e "41270\n41280" > icd-date.fields.ids
+ukbconv ukb42156.enc_ukb r -iicd-date.fields.ids -oicd-date
+sed -i 's/"//g' icd-date.tab
+
+cnt=`head -1 icd-date.tab | awk '{printf NF}'` # 找出文件的列数
 awk -v cn=$cnt -v co="J440" '{if (NR==1) print "IID", co; else {c=(cn-1)/2; printf $1;  
-    for (i=2; i<=(c+1); i++) { if ($i==co) printf " "$(i+c) } printf "\n"  }}' icd-date.tab | awk ‘NF==2’ > icd-date.2cols
-
-# 对于有一个不同的ICD-Date 的表型，比如 dementia 有5个ICD 代码“F00|F01|F02|F03|G30”，可以按照上述方法分别生成5个文件，比如 icdDate.F00.2cols, icdDate.F01.2cols，等。
-然后在R里面合并这些文件，并找出每人的最小的日期。  
+    for (i=2; i<=(c+1); i++) { if ($i==co) printf " "$(i+c) } printf "\n"  }}' icd-date.tab | awk 'NF==2' > icd-date.2cols
+ 
 
 ```
 

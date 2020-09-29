@@ -1,0 +1,11 @@
+setwd("C:/Users/黄捷/Desktop")
+source("D:/scripts/mhplot.f.R")
+
+png("mhplot.png", w=1200, h=1800)
+par(mfrow=c(5,1), mai=c(0.6,1,0.6,0)) 
+mhplot('cerebral', 'D:/projects/001students/001CVD/gwas/cerebro.gwas.p001.gz', 'CHR', 'POS', 'A1_FREQ', 'P', 5e-8, 'D:/files/posCtrls/CAD.txt', 3)
+mhplot('hypertensive', 'D:/projects/001students/001CVD/gwas/hypertensive.gwas.p001.gz', 'CHR', 'POS', 'A1_FREQ', 'P', 5e-8, 'D:/files/posCtrls/CAD.txt', 3)
+mhplot('ischaemic', 'D:/projects/001students/001CVD/gwas/ischaemic.gwas.p001.gz', 'CHR', 'POS', 'A1_FREQ', 'P', 5e-8, 'D:/files/posCtrls/CAD.txt', 3)
+mhplot('pulmonary', 'D:/projects/001students/001CVD/gwas/pulmonary.gwas.p001.gz', 'CHR', 'POS', 'A1_FREQ', 'P', 5e-8, 'D:/files/posCtrls/CAD.txt', 3)
+mhplot('vein', 'D:/projects/001students/001CVD/gwas/vein.gwas.p001.gz', 'CHR', 'POS', 'A1_FREQ', 'P', 5e-8, 'D:/files/posCtrls/CAD.txt', 3)
+dev.off()

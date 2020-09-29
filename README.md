@@ -2,16 +2,20 @@
 # #1. 下载和处理 HAPMAP3 genotype 数据, 一般作为 LD 计算的 reference panel
 
 ```
-打开 https://www.broadinstitute.org/medical-and-population-genetics/hapmap-3， 点击 How To Download This Release 下面的 A. SNP Genotype Data 段落的中间3个链接。
-文件名字里面有 "b36"，现在一般都用 b37（比如 UK Biobank），甚至有的用 b38，所以下载后解压后需要将那个 .map 文件先用 liftOver 转化为 b37 格式，然后用 PLINK 生成 bed/bim/fam 文件。
-这一步已经完成，生成的 PLINK 格式文件已经放到百度网盘，请大家下载。这个基因数据将作为我们组进行 LDSC 和 GSMR 分析的标准文件。
+打开 https://www.broadinstitute.org/medical-and-population-genetics/hapmap-3， 
+点击 How To Download This Release 下面的 A. SNP Genotype Data 段落的中间3个链接。
+文件名字里面有 "b36"，现在一般都用 b37（比如 UK Biobank），甚至有的用 b38，
+所以下载后解压后需要将那个 .map 文件先用 liftOver 转化为 b37 格式，然后用 PLINK 生成 bed/bim/fam 文件。
+这一步已经完成，生成的 PLINK 格式文件已经放到百度网盘，请大家下载。
+这个基因数据将作为我们组进行 LDSC 和 GSMR 分析的标准文件。
 
 ```
 
 # #2. 下载和处理 1000 genomes (千人基因组) genotype 数据， 一般作为 imputation 的 reference panel.
 
 ```
-打开 https://www.internationalgenome.org/data，在 Available data 下面，点击该页面 Phase 3 对应的 VCF 链接，可以看到以 “ALL.” 开头的文件，可以一个一个直接点击链接下载。
+打开 https://www.internationalgenome.org/data，在 Available data 下面，点击该页面 Phase 3 对应的 VCF 链接，
+可以看到以 “ALL.” 开头的文件，可以一个一个直接点击链接下载。
 也可以用下面的命令下载, 并且随之将下载的VCF文件转换为PLINK格式
 
 由于 chrX, chrY, chrMT 的文件名字跟其它染色体不同，用下面的命令下载的时候，里面的文件名字也需要相应调整。 
@@ -47,6 +51,7 @@ done
 
 Hapmap 和 千人基因组， 这可是初中课本讲到的内容哦。 
 
+![Figure 1](./pictures/middle.jpg)
 
 
 

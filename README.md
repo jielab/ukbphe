@@ -107,7 +107,9 @@ for (i in 1:nrow(ICDnames)) {
   phe[[paste0("icd_",ICDnames$names[i])]] = ifelse( grepl(ICDnames$codes[i], phe$icd10), 1, ifelse(grepl( substring(ICDnames$codes[i],1,1), phe$icd10), NA,0)) 
 }
 
+```
 
+```
 ## 对于绝大多数的 ICD code, UKB 里面有 First occurances 的数据，比如 http://biobank.ndph.ox.ac.uk/showcase/field.cgi?id=131492。
 ## 如果想自己通过写代码来做，可以先提取ICD （data field 42170）以及相对应的日期（data field 42180）, 然后提取单个ICD 的Date, 比如COPD (代码J440，不是J44)。
 ## 对 Dementia 这种有多个个ICD 代码的 (F00|F01|F02|F03|G30)，可以分别生成 icdDate.F00.2cols, icdDate.F01.2cols，等。然后在R里面合并文件并找出每人的最小日期。
@@ -119,7 +121,6 @@ sed -i 's/"//g' icd-date.tab
 cnt=`head -1 icd-date.tab | awk '{printf NF}'` # 找出文件的列数
 awk -v cn=$cnt -v co="J440" '{if (NR==1) print "IID", co; else {c=(cn-1)/2; printf $1;  
     for (i=2; i<=(c+1); i++) { if ($i==co) printf " "$(i+c) } printf "\n"  }}' icd-date.tab | awk 'NF==2' > icd-date.2cols
- 
 
 ```
 

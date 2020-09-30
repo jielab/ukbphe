@@ -51,8 +51,8 @@ cp chr1.bim chr1.bim.COPY
 awk '{if(array[$2]=="Y") {i++; $2=$2".DUP"i}; print $0; array[$2]="Y"}' chr1.bim.COPY > chr1.bim 
 ```
 
-
-![Figure 2](./pictures/ukb.jpg)
+![Figure 2](./pictures/ukb-logo.jpg)
+![Figure 3](./pictures/ukb.jpg)
 
 
 
@@ -135,8 +135,8 @@ trait_inv = qnorm((rank(trait_res,na.last="keep")-0.5) / length(na.omit(trait_re
 
 
 
-![Figure 3](./pictures/GWAS.jpg)
-
+![Figure 4](./pictures/GWAS.jpg)
+![Figure 5](./pictures/GWAS2.jpg)
 
 # #3. GWAS 运行
 目前GWAS 由专人负责运行，以下链接可以随时下载公开的GWAS数据

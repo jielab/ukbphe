@@ -136,9 +136,7 @@ trait_res = residuals(lm(trait ~ age+sex+PC1+PC2, na.action=na.exclude)
 trait_inv = qnorm((rank(trait_res,na.last="keep")-0.5) / length(na.omit(trait_res)))
 ```
 
-<br>
-<br>
-<br>
+
 ![Figure 4](./pictures/GWAS.jpg)
 ![Figure 5](./pictures/GWAS2.jpg)
 

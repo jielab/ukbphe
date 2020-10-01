@@ -1,12 +1,12 @@
 <br/>
-# $\color{#FF3030}{#1. 下载和处理国际上公用公开的数据}$ 
+<br/>
+# <font color=red >#1. 下载和处理国际上公用公开的数据</font>
 
 这是初二生物学课本里面的内容哦！
 
 ![Figure 1](./pictures/middle.jpg)
 
 #1.1 HAPMAP3 genotype 数据, 一般作为 LD 计算的 reference panel
-
 ```
 打开 https://www.broadinstitute.org/medical-and-population-genetics/hapmap-3， 
 点击 How To Download This Release 下面的 A. SNP Genotype Data 段落的中间3个链接。
@@ -55,9 +55,9 @@ awk '{if(array[$2]=="Y") {i++; $2=$2".DUP"i}; print $0; array[$2]="Y"}' chr1.bim
 ```
 
 
-
 <br/>
-# $\color{#FF3030}{#2.  提取 UKB 一般表型数据}$ 
+<br/>
+# <font color=red >#2.  提取 UKB 一般表型数据</font>
 
 ![Figure 2](./pictures/ukb-logo.jpg)
 ![Figure 3](./pictures/ukb.jpg)

@@ -1,5 +1,5 @@
-mhplot <-function(title,gwas,chr,pos,maf,maf_t,pval,cutoff,poscon_f,ylim1){
-
+mhplot <-function(trait, gwas, 
+	chr="CHR", pos="POS", pval="P", cutoff=1e-8, ylim_t=0, maf=NA, maf_t=1e-5, poscon_f="NO"){
 	nchr=22	
 	if (grepl("\\.gz", gwas)) {
 		dat <- read.table(gzfile(gwas,'r'), header=T, as.is=T)
@@ -14,7 +14,7 @@ mhplot <-function(title,gwas,chr,pos,maf,maf_t,pval,cutoff,poscon_f,ylim1){
 	names(dat) <- c("chr","pos","pval", "maf")
 	dat$chr[dat$chr=="X"] <- 23; dat$chr <- as.numeric(dat$chr)
 	dat$pval <- as.numeric(dat$pval)
-	dat <- subset(dat, !is.na(pval) & maf > maf_t & pval >0 & pval <=10^(-ylim1) & !is.na(pos) & chr %in% c(1:nchr))
+	dat <- subset(dat, !is.na(pval) & maf > maf_t & pval >0 & pval <=10^(-ylim_t) & !is.na(pos) & chr %in% c(1:nchr))
 	dat$maf =ifelse(dat$maf>0.5, 1-dat$maf, dat$maf)
   # border=read.table("/mnt/d/files/ukb.chr.border.b38", header=F)
     border=read.table("D:/files/ukb.chr.border.b38", header=F)
@@ -46,7 +46,7 @@ mhplot <-function(title,gwas,chr,pos,maf,maf_t,pval,cutoff,poscon_f,ylim1){
 
 	dat$col = ifelse((dat$pval<=cutoff & dat$maf<=0.01), "red", ifelse(dat$chr %in% seq(2,24,2), "grey30", "grey60"))
 	
-	plot(dat$loc, dat[,"logP_NEW"], type="n", xaxt="n", frame.plot=F, main=paste(title, "(N=",nrow(dat),")"), cex=1, cex.main=2, cex.axis=2, cex.lab=2, xlab="",ylab="-log10(P)", cex.lab=2, font=2, xlim=c(min(dat$loc,na.rm=T),max(dat$loc,na.rm=T)), ylim=c(ylim1,ylim), axes=F)
+	plot(dat$loc, dat[,"logP_NEW"], type="n", xaxt="n", frame.plot=F, main=paste(trait, "(N=",nrow(dat),")"), cex=1, cex.main=2, cex.axis=2, cex.lab=2, xlab="",ylab="-log10(P)", cex.lab=2, font=2, xlim=c(min(dat$loc,na.rm=T),max(dat$loc,na.rm=T)), ylim=c(ylim_t,ylim), axes=F)
 	axis(side=1, at=phy.median, labels=1:nchr, font=2, cex.axis=2)
 	if (logP.max > -log10(cutoff)) {
 		abline(-log10(cutoff),0,col="red",lty=2)

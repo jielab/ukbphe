@@ -235,9 +235,9 @@ done
 
 #5.2. 因果分析 Mendelian Randomization，GSMR (https://cnsgenomics.com/software/gcta/#GSMR)
 
-GTCA 里面的 GSMR也需要用到上述提取的 g1k 基因数据作为 计算LD 的参考。
-由于上述的 gak 数据是按照染色体分开的20多个数据，这个时候就需要用 --mbile （而不是 --bfile）来表明需要读取多个（multiple）bfile。
-可以用这个命令生成一个 bfile.list 然后用到下面的命令里
+我们建议用 hapmap3 的数据作为 LD reference。
+如果用上述提取的千人基因组数据作为 LD 参考，由于数据是按照染色体分开的，就需要用 --mbfile （而不是 --bfile）。
+并且 GCTA 对文件的格式有比较固定和严格的要求，建议只包含 SNP A1 A2 freq b se p N
 
 ```
 dir=/mnt/d/projects/001cvd

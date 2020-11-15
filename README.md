@@ -237,7 +237,7 @@ done
 
 我们建议用 hapmap3 的数据作为 LD reference。
 如果用上述提取的千人基因组数据作为 LD 参考，由于数据是按照染色体分开的，就需要用 --mbfile （而不是 --bfile）。
-并且 GCTA 对文件的格式有比较固定和严格的要求，建议只包含 SNP A1 A2 freq b se p N
+!!! GCTA 对文件的格式有比较固定和严格的要求，SNP A1 A2 freq b se p N 必须按照这个顺序！！！
 
 ```
 dir=/mnt/d/projects/001cvd

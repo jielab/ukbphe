@@ -1,6 +1,7 @@
-mhplot <-function(trait, gwas, 
-	chr="CHR", pos="POS", pval="P", cutoff=1e-8, ylim_t=0, maf=NA, maf_t=1e-5, poscon_f="NO"){
-	nchr=22	
+mhplot <-function( trait, gwas, chr="CHR", pos="POS", pval="P", cutoff=5e-8, 
+	ylim_t=0, maf=NA, maf_t=1e-5, poscon_f="NO", dibiao=NA ) {
+	
+	nchr=23	
 	if (grepl("\\.gz", gwas)) {
 		dat <- read.table(gzfile(gwas,'r'), header=T, as.is=T)
 	} else {
@@ -12,16 +13,13 @@ mhplot <-function(trait, gwas,
 		dat <- dat[,c(chr,pos,pval, maf)]
 	}
 	names(dat) <- c("chr","pos","pval", "maf")
-	dat$chr[dat$chr=="X"] <- 23; dat$chr <- as.numeric(dat$chr)
-	dat$pval <- as.numeric(dat$pval)
-	dat <- subset(dat, !is.na(pval) & maf > maf_t & pval >0 & pval <=10^(-ylim_t) & !is.na(pos) & chr %in% c(1:nchr))
-	dat$maf =ifelse(dat$maf>0.5, 1-dat$maf, dat$maf)
-  # border=read.table("/mnt/d/files/ukb.chr.border.b38", header=F)
-    border=read.table("D:/files/ukb.chr.border.b38", header=F)
-    names(border) <- c("chr","pos","maf", "pval")
-    dat <- rbind(dat,border)
-	dat$logP<- -log10(dat$pval)
-
+	if(file.exists(dibiao)) {
+		border=read.table(dibiao, header=F)
+		names(border) <- c("chr","pos")
+		border$maf=0.5
+		border$pval=1
+		dat <- rbind(dat,border)
+	}	
 	if (file.exists(poscon_f)) {
 		poscon <- read.table(poscon_f, header=T,as.is=T)
 		poscon <- poscon[,c("CHR","POS")]
@@ -29,7 +27,13 @@ mhplot <-function(trait, gwas,
 	} else {
 		poscon <- data.frame(chr=NA, pos=NA)[numeric(0),]
 	}
-
+	
+	dat$chr[dat$chr=="X"] <- 23; dat$chr <- as.numeric(dat$chr)
+	dat$pval <- as.numeric(dat$pval)
+	dat <- subset(dat, !is.na(pval) & maf > maf_t & pval >0 & pval <=10^(-ylim_t) & !is.na(pos) & chr %in% c(1:nchr))
+	dat$maf =ifelse(dat$maf>0.5, 1-dat$maf, dat$maf)
+	dat$logP<- -log10(dat$pval) 
+	
 	cumlen <- 0
 	phy.max <- tapply(dat$pos, dat$chr, max,na.rm=T)
 	for(i in 1:nchr){
@@ -61,6 +65,6 @@ mhplot <-function(trait, gwas,
 	#	if(i %in% seq(2,24,2)) col="grey" else col="darkgrey"
 		dat1= subset(dat, chr==i) 
 		points(dat1$loc, dat1$logP_NEW, col=dat1$col, pch=20, cex=0.8)
-		abline(v=poscon[poscon$chr==i,"loc"], lwd=0.1, lty=3, col="green")
+		abline(v=poscon[poscon$chr==i,"loc"], lwd=0.01, lty=1, col="green")
 	}
 }

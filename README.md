@@ -238,19 +238,19 @@ done
 GTCA 里面的 GSMR也需要用到上述提取的 g1k 基因数据作为 计算LD 的参考。
 由于上述的 gak 数据是按照染色体分开的20多个数据，这个时候就需要用 --mbile （而不是 --bfile）来表明需要读取多个（multiple）bfile。
 可以用这个命令生成一个 bfile.list 然后用到下面的命令里
-```
-seq 1 22 | xargs -n1 -I % echo chr% > bfile.list
 
-for trait in RHR; do
-    echo "$trait $dir/$trait.gcta.txt" > $trait.exposure
-    echo -n > $trait.outcome
-    for trait2 in $traits; do
-        if [[ $trait2 != $trait ]]; then
-            echo "$trait2 $dir/$trait2.gcta.txt" >> $trait.outcome
-        fi
-    done
-   gcta64 --mbfile bfile.list --gsmr-file $trait.exposure $trait.outcome --gsmr-direction 2 --gwas-thresh 5e-8 --effect-plot --out $trait
+```
+dir=/mnt/d/projects/001cvd
+trait1=artery
+trait2=copd
+for trait in $trait1 $trait2; do
+	echo "SNP A1 A2 freq b se p N" > $trait.gwas.txt
+	zcat $dir/gwas/$trait1.gwas.gz | awk 'NR>1 {print $1, $4, $5, $9, $11,$12, $14, $10}' >> $trait.gwas.txt
 done
+echo "$trait1 $trait1.gwas.txt" > test.exposure
+echo "$trait2 $trait2.gwas.txt" > test.outcome
+gcta64 --bfile hapmap3/g1k.b37 --gsmr-file test.exposure test.outcome --gsmr-direction 2 --gwas-thresh 1e-5 --effect-plot --out test
+
 ```
 
 

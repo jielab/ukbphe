@@ -177,6 +177,10 @@ done
 #4.2 从GWAS catalog (https://www.ebi.ac.uk/gwas) 寻找该GWAS的文章和SNP，用 compareP.R 和 compareP.f.R 确认该GWAS和已发表的结果大致相同。
 下面的这个图，显示某篇已经发表的CAD的GWAS报道的SNP，跟UKB的结果比较。由于那个文件里面没有P值，所以只画出了 EAF 和 BETA这两个比较图。
 
+已发表的文章中的图
+![Figure 4](./pictures/beta.jpg)
+
+我们的数据画出来的图
 ![Figure 4](./pictures/compareP.png)
 
 

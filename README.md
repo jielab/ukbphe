@@ -187,7 +187,7 @@ done
 #4.3 提取GWAS里面的的统计显著性（significant）信号，添加简单的注释（比如所在的基因名称）
 
 使用 PLINK (https://www.cog-genomics.org/plink/1.9/) 左边菜单中的 Report postprocess 中的 3个命令（--annotate, --clump, --gene-report）
-由于 千人基因组 (g1k) 的基因数据过大（将近1亿个SNP），一般用 for chr in {1..22}; do 这样的命令来分别处理每一个染色体的数据
+
 
 ```
 trait=MI
@@ -196,9 +196,12 @@ gunzip -c $trait.gwas.gz | sed '1 s/ POS/ BP/' > $trait.gwas.txt # 以后就不�
 
 plink --annotate $trait.gwas.txt NA ranges=glist-hg19 --border 10 --pfilter 5e-8 --out $trait.top
 
-plink1.9 --vcf g1k.chr$chr.vcf.gz --clump $trait.gwas.txt --clump-p1 5e-08 --clump-p2 5e-08 --clump-kb 1000 --clump-r2 0.2 --out $trait.chr$chr
-awk '$1 !="" {print $3,$1, $4,$5}' $trait.chr$chr.clumped > $trait.chr$chr.top
-*** plink clump 的结果，不包括那些 --bfile 里面没有的SNP，所以得要把那些SNP再添加到 clump 的结果里。
+由于 千人基因组 (g1k) 的基因数据过大（将近1亿个SNP），一般讲每一个染色体的GWAS数据分开来 clump
+for chr in {1..22}; do
+   plink1.9 --vcf g1k.chr$chr.vcf.gz --clump $trait.gwas.txt --clump-p1 5e-08 --clump-p2 5e-08 --clump-kb 1000 --clump-r2 0.2 --out $trait.chr$chr
+   awk '$1 !="" {print $3,$1, $4,$5}' $trait.chr$chr.clumped > $trait.chr$chr.top
+done
+*** plink clump 的结果，不包括那些 --bfile 里面没有的SNP，所以得要把那些SNP再添加到 clump 的结果里。可惜 PLINK的作者 Chris Chang不想解决这个问题，请见 https://groups.google.com/g/plink2-users/c/DacWWAPvGE0/m/uH8NVYq_CQAJ
 
 ```
 

@@ -211,10 +211,21 @@ zcat ABC.gwas.gz | awk 'NR==1 || $NF<5e-8 {b=sprintf("%.0f",$3/1e6); print $1,$2
 
 ```
 
-对于有统计显著性的重要区域（locus），可以ZOOM 画图 (http://locuszoom.org)
+#4.4 如果觉得上述步骤过于复杂，可以讲 GWAS 的数据直接导入 LocusZOOM (http://locuszoom.org), 轻松得到 Manhattan Plot, Top Loci Table, 以及任何基因组区域的 locuszoom 图。有关问题，请参考我跟对方的沟通 https://github.com/statgen/locuszoom-hosted/issues/19
 
- 
-#4.4 单个GWAS的数据的深度分析 
+#4.5 生成 PRS
+我们可以根据任何一个GWAS，来计算UKB里面每个人的PRS，当然也可以计算任何人包括我们自己的PRS，只要我们有基因数据就行。
+相关的方法学，请参考经典版的PLINK （http://zzz.bwh.harvard.edu/plink/profile.shtml）和新版的PLINK1.9 （https://www.cog-genomics.org/plink/1.9/score）
+由于UKB的基因数据很大，一般是将22条染色体分别运行，命令如下：
+
+```
+for chr in {1..22}; do
+      plink2 --pfile chr$chr --score chr$chr.ref 1 2 3 header no-mean-imputation cols=+scoresums list-variants --out chr$chr
+done
+```
+
+ 
+#4.6 单个GWAS的数据的深度分析 
 
 ```
 基因国际上大量样本的 SNP频率 和基本注解查询： GnomAD: https://gnomad.broadinstitute.org

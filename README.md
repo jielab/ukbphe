@@ -222,7 +222,22 @@ zcat ABC.gwas.gz | awk 'NR==1 || $NF<5e-8 {b=sprintf("%.0f",$3/1e6); print $1,$2
 
 ```
 
-#4.4 如果觉得上述步骤过于复杂，可以讲 GWAS 的数据直接导入 LocusZOOM (http://locuszoom.org), 轻松得到 Manhattan Plot, Top Loci Table, 以及任何基因组区域的 locuszoom 图。有关问题，请参考我跟对方的沟通 https://github.com/statgen/locuszoom-hosted/issues/19
+#4.4 如果不考虑 SNP之间的LD，就是单纯的根据 P值和 CHR：POS 将所有的显著信号划分为1MB的片区，可以用下面的 AWK 命令
+该命令假设GWAS数据的第1，2，3 列 分别是 CHR, POS, SNP，最后一列是P 值。
+
+```
+awk '{b=sprintf("%.0f",$2/1e6); print $3,$1,$2,$NF,b}' TRAIT.p5e-8 | sort -k 2,2n -k 5,5n -k 4,4g | awk '{if (arr[$NF] !="Y") print $0; arr[$NF] ="Y"}' > TRAIT.loci
+
+```
+要把上述得到的显著区域跟别人已经发表的 SNP进行比较，看是不是有重叠（1MB范围之内的重叠都算），可以用下面的 bedtools 命令 
+该文件需要将 A 和 B 两个文件转换成 bed 格式，并把其中的一个文件的SNP的位置，左右各扩张1MB，
+比如A文件中的某个 rsXYZ 位于1号染色体上的3000000 位置，那么bed 文件中就写： 1  2000000  2000000   rsXYZ
+如果起始位置出现负数，一定要将负数改为 0。
+```
+bedtools intersect -a A.bed -b B.bed -wo
+```
+
+GWAS 的数据直接导入 LocusZOOM (http://locuszoom.org), 轻松得到 Manhattan Plot, Top Loci Table, 以及任何基因组区域的 locuszoom 图。有关问题，请参考我跟对方的沟通 https://github.com/statgen/locuszoom-hosted/issues/19
 
 #4.5 生成 PRS
 我们可以根据任何一个GWAS，来计算UKB里面每个人的PRS，当然也可以计算任何人包括我们自己的PRS，只要我们有基因数据就行。

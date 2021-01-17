@@ -249,7 +249,36 @@ for chr in {1..22}; do
       plink2 --pfile chr$chr --score chr$chr.ref 1 2 3 header no-mean-imputation cols=+scoresums list-variants --out chr$chr
 done
 ```
+生成的PRS，可以用来评估 PRS 对疾病（比如 Alzhermer's Disesase）的影响，实例代码如下：
+```
+pacman::p_load(data.table, dplyr, ggplot2, tidyverse, magrittr, survival, survminer)
 
+dat0 <- readRDS("D:/data/ukb/Rdata/ukb.phe.rds")
+dat0 <- subset(dat0, select=grep("IID|array|race|eth|related|age|sex|Ill|bmi|attend|birth|death|smoke|alcohol|PC1$|PC2$|apoe|_ad|_dementia|dep|dis|bb_|bc_", names(dat0))) 
+prs = read.table(gzfile('D:/data/ukb/prs/dementia.prs.gz','r'), header=T, as.is=T) 
+dat <- merge(dat0, prs, by="IID") %>%
+	rename(date_dx = date_dementia) %>%
+	filter( race=="White" & age >=60 & !grepl("e1",apoe) ) %>% 
+	mutate( 
+		dx = ifelse( is.na(date_dx), 0,1),
+		lastday = fifelse(!is.na(date_dx), date_dx, fifelse(!is.na(death_date), death_date, as.Date("2018-02-28"))),
+		followyears = (as.numeric(lastday) - as.numeric(date_attend)) / 365.25
+	) %>%
+	filter( followyears >0 ) %>% 
+	mutate (
+		prs_qt = cut(prs, breaks=quantile(prs, probs=seq(0,1,0.2), na.rm=T), include.lowest=T, labels=paste0("q",1:5)),
+		prs_grp = ifelse(prs_qt=="q1", "low", ifelse(prs_qt=="q5", "high", "middle")),
+		prs_grp = factor(prs_grp, levels=c("low","middle","high"))
+	)
+
+### replicate analysis results ###
+table(dat$dx, useNA="always"); hist(dat$followyears)
+sum(dat$followyears) #1,545,433 person-years reported in paper
+round(prop.table(table(dat$prs_grp, dat$dx), 1) ,3) # 1.23% vs. 0.65% reported in paper
+surv.obj <- Surv(time=dat$followyears, event=dat$dx)
+summary(cox.fit <- coxph(surv.obj ~ age+sex + smoke_status+alcohol_status + prs, data=dat))
+ggforest(cox.fit, data=dat)
+```
  
 #4.6 单个GWAS的数据的深度分析 
 

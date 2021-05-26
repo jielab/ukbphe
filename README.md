@@ -157,6 +157,9 @@ trait_inv = qnorm((rank(trait_res,na.last="keep")-0.5) / length(na.omit(trait_re
 
 ![GWAS](./pictures/GWAS-new.jpg)
 
+<br/>
+
+#3.1 专人在服务器上运行
 目前GWAS 由专人负责运行，一般来说就是通过下面这样的PLINK命令来跑
 
 ```
@@ -165,8 +168,9 @@ for chr in {1..22}; do
 ```
 
 上述命令顺利跑完后，确认生成的文件没有问题后，可以把所有的染色体的数据串到一起，形成一个单一的 XXX.gwas.gz 文件。鉴于2千多万个SNP，文件太大，我们一般只保留：P<0.01的SNP 以及那些在Hapmap3 里面的SNP。最终合并成的 XXX.gwas.gz 文件用 TAB 分割，CHR:POS 排好序，要不然 LocusZoom 那样的软件不能处理。也可以用 tabix -f -S 1 -s 1 -b 2 -e 2 XXX.gwas.gz 对数据进行索引，便于 LocalZoom 那样的软件去处理。
+<br/>
 
-如果想找公开的GWAS数据进行练手，或对比，可以从以下链接下载公开的GWAS数据
+#3.2 公开的GWAS数据进行练手，或对比
 
 ```
 最经典的，历史悠久的 GWAS Catalog: https://www.ebi.ac.uk/gwas
@@ -181,12 +185,29 @@ UKB GWAS 完整的分析结果，网上发布
  A. 哈佛大学的CVD knowlege portal: https://cvd.hugeamp.org/
  B. 南加州大学的神经影像基因组国际合作团队：http://enigma.ini.usc.edu/
 ```
+
+<br/>
+
+#3.3 网上下载下来的GWAS数据的格式化
+别人发布到网上的数据，可能不是用rsID，而是类似 CHR:POS_REF_ALT 这样的格式。
+这个时候可以通过下面这么的代码，跟前面提到的 UKB上将近一亿个SNP的参考信息进行合并，然后改成 rsID 格式。
+这里的 join_file.py 是我写的，使用了多年，可以合并多个文件。一个优点是，合并后的数据顺序跟第一个文件的一模一样，而其它的很多合并命令或软件会很慢，会打乱顺序。
+这个地方不建议采用 ANNOVAR 那样的软件来做。因为用 ANNOVAR 来出来一个具有几百万个SNP的GWAS会很费事，并且 ANNOVAR主要不是做这个用的。
+
+```
+zcat bbj.copd.gwas.gz | awk '{print $3}' | sed '1 s/SNPID/SNP/; s/_/:/' > bbj.copd.snpid
+grep -hwf bbj.copd.snpid ukb_imp/mfi/ukb_mfi_chr*_v3.txt > bbj.copd.ukb
+python scripts/join_file.py -i "bbj.copd.gwas.gz,SPACE,0 bbj.copd.ukb,SPACE,0" -o merged.txt
+```
+
 <br/>
 <br/>
+
 
 
 # #4. 单个 GWAS 数据的分析
 <br/>
+
 #4.1 画一个 Manhattan Plot, 除了公用的 qqman package 之外，可以用我的 mhplot.R 和 mhplot.f.R 代码，前者 call 后者。
 我的代码可以：多个图画在同一页上，红色显示 rare variants, 添加绿色的已发表的SNP，等。
 为了保证所有的图的横坐标位置对齐，我的代码用到了每个染色体的地标（dibiao），可以用下面的代码生成

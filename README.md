@@ -77,7 +77,7 @@ WINDOWS电脑建议安装系统自带的Ubuntu Linux系统，cd /mnt/d/。下载
 写一个 VIP.fields.txt 文件，列出想提取的变量和对应的 data-field，比如 21022 age
 
 ```
-unkunpack ukb42156.enc 【数据密码】
+unkunpack ukb42156.enc 48?0?6475f14648f8a114?5279c06b64a78aa70454efb55b00cc1510e5?db372
 awk '{print $1}' ukb.vip.fields > ukb.vip.fields.id
 sort ukb.vip.fields.id | uniq -d
 ukbconv ukb42156.enc_ukb r -iukb.vip.fields.id -ovip
@@ -146,12 +146,9 @@ trait_inv = qnorm((rank(trait_res,na.last="keep")-0.5) / length(na.omit(trait_re
 ```
 
 
-
 # #3. GWAS 运行
 
-![Figure 4](./pictures/GWAS.jpg)
-![Figure 5](./pictures/GWAS2.jpg)
-
+![GWAS](./pictures/GWAS-new.jpg)
 
 目前GWAS 由专人负责运行，一般来说就是通过下面这样的PLINK命令来跑
 
@@ -183,7 +180,7 @@ for chr in {1..22} X; do
   tail -1 ukb_mfi_chr${chr}_v3.txt | awk -v c=$chr '{print c, $3}' >>  ukb.chrom.pos.b37   
 done
 ```
-![Figure 4](./pictures/mhplot.png)
+![Manhattan Plot](./pictures/mhplot.png)
 
 
 #4.2 从GWAS catalog (https://www.ebi.ac.uk/gwas) 寻找该GWAS的文章和SNP，用 compareP.R 和 compareP.f.R 确认该GWAS和已发表的结果大致相同。
@@ -297,7 +294,7 @@ LDpred2 https://privefl.github.io/bigsnpr/articles/LDpred2.html
 
 
 
-# #5. 多个GWAS 之间的分析（哈佛公卫学院梁黎明 三套马车方案）
+# #5. 多个GWAS 之间的分析（哈佛公卫学院梁黎明 LDSC-GSMR-TWAS “三件套” 方案）
 
 #5.1. genetic correlation 分析, LDSC (https://github.com/bulik/ldsc)
 
@@ -359,16 +356,17 @@ done
 ```
 英国 UK biobank: https://ukbiobank.ac.uk
 美国 All of US (奥巴马总统称之为 Precision Medicine Initiative): https://databrowser.researchallofus.org/
+
+GWAS 结果汇总gwas catalog: https://www.ebi.ac.uk/gwas
+
+UKB GWAS 完整的分析结果，网上发布
+ 英国爱丁堡大学：geneatlas: http://geneatlas.roslin.ed.ac.uk
+ 美国哈佛大学：http://www.nealelab.is/uk-biobank 
+
 TopMed browser: https://bravo.sph.umich.edu/
 Gnomad browser: https://gnomad.broadinstitute.org/
 UCSC genome browser: https://www.genome.ucsc.edu/
 dbSNP: https://www.ncbi.nlm.nih.gov/snp/
 
-2018. Adult height and risk of 50 diseases: a combined epidemiological and genetic analysis
- 
-2019. JACC. Genome-Wide Assessment for Resting Heart Rate and Shared Genetics With Cardiometabolic Traits and Type 2 Diabetes
-Genome Wide Assessment of Shared Genetic Architecture Between Rheumatoid Arthritis and Cardiovascular Diseases Using the UK Biobank Data 
-
-2019. JAMA. Association of Lifestyle and Genetic Risk With Incidence of Dementia
 ```
 

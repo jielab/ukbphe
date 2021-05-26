@@ -248,6 +248,7 @@ bedtools intersect -a A.bed -b B.bed -wo
 ```
 
 GWAS 的数据直接导入 LocusZOOM (http://locuszoom.org), 轻松得到 Manhattan Plot, Top Loci Table, 以及任何基因组区域的 locuszoom 图。有关问题，请参考我跟对方的沟通 https://github.com/statgen/locuszoom-hosted/issues/19
+
 <br/>
 
 #4.5 生成 PRS

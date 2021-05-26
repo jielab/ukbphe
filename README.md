@@ -193,8 +193,9 @@ for chr in {1..22} X; do
   head -1 ukb_mfi_chr${chr}_v3.txt | awk -v c=$chr '{print c, $3}' >>  ukb.chrom.pos.b37 
   tail -1 ukb_mfi_chr${chr}_v3.txt | awk -v c=$chr '{print c, $3}' >>  ukb.chrom.pos.b37   
 done
+
 ```
-![Manhattan Plot](./pictures/mhplot.png)
+![Manhattan-Plot](./pictures/mhplot.png)
 
 
 #4.2 从GWAS catalog (https://www.ebi.ac.uk/gwas) 寻找该GWAS的文章和SNP，用 compareP.R 和 compareP.f.R 确认该GWAS和已发表的结果大致相同。

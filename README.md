@@ -64,9 +64,8 @@ awk '{if(array[$2]=="Y") {i++; $2=$2".DUP"i}; print $0; array[$2]="Y"}' chr1.bim
 
 ![Figure 2](./pictures/ukb-logo.jpg)
 
-有人做了一个 ukbtools 的R软件包，但我觉得不是太好用，并且很慢。
-https://kenhanscombe.github.io/ukbtools/articles/explore-ukb-data.html
-如果你们有兴趣，可以参考这个，可以用两种不同的方法来提取数据，进行比较
+有人做了一个 ukbtools 的R软件包，https://kenhanscombe.github.io/ukbtools/articles/explore-ukb-data.html。
+但我觉得不是太好用，并且很慢。可以参考这个，用两种不同的方法来提取数据，进行比较。
 <br/>
 
 #2.1 只有一列或者少数计列的一般表型（age, sex, race, bmi, etc.）

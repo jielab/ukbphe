@@ -77,7 +77,7 @@ The information scores and minor allele frequency data for the imputed genotypes
 
 WINDOWS电脑建议安装系统自带的Ubuntu Linux系统，cd /mnt/d/。下载UKB小程序ukbunpack, unbconv, encoding.ukb 等。
 苹果电脑，参考 https://github.com/spiros/docker-ukbiobank-utils。
-打开ukbiobank.ac.uk, 点击中间的 Data Showcase 菜单。然后点击第一个“Essential Information”，阅读 Access and using your data。
+打开ukbiobank.ac.uk, 点击 Data Showcase 菜单。然后点击第一个“Essential Information”，阅读 Access and using your data。
 写一个 VIP.fields.txt 文件，列出想提取的变量和对应的 data-field，比如 21022 age
 
 ```
@@ -180,7 +180,8 @@ UKB GWAS 完整的分析结果，网上发布
  A. 美国哈佛大学：http://www.nealelab.is/uk-biobank 
  B. 英国爱丁堡大学：geneatlas: http://geneatlas.roslin.ed.ac.uk
 
-日本生物样本库的 GWAS： http://jenger.riken.jp/en/result
+日本生物样本库的 GWAS： http://jenger.riken.jp/en/result 
+** 对于这上面的每一个表型，点击最后一列，查看曼哈顿图和QQ图，然后点击那个页面上的 Download summary statistics。否则，前面一页的 download 下来的数据没有 rsID.
 
 各大专项疾病领域的GWAS，比如：
  A. 哈佛大学的CVD knowlege portal: https://cvd.hugeamp.org/
@@ -192,13 +193,20 @@ UKB GWAS 完整的分析结果，网上发布
 #3.3 网上下载下来的GWAS数据的格式化
 别人发布到网上的数据，可能不是用rsID，而是类似 CHR:POS_REF_ALT 这样的格式。
 这个时候可以通过下面这么的代码，跟前面提到的 UKB上将近一亿个SNP的参考信息进行合并，然后改成 rsID 格式。
-这里的 join_file.py 是我写的，使用了多年，可以合并多个文件。一个优点是，合并后的数据顺序跟第一个文件的一模一样，而其它的很多合并命令或软件会很慢，会打乱顺序。
+第一步是提取UKB里面的位点。如果你的GWAS的位点有几百万甚至几千万个SNP，这个时候最好是对每一个 CHR 进行分开处理。
+第二部是合并。这里的 join_file.py 是我写的，使用了多年，可以合并多个文件。该代码的优点是，合并后的数据顺序跟第一个文件的一模一样，而其它的很多合并命令或软件会很慢，会打乱顺序。
 这个地方不建议采用 ANNOVAR 那样的软件来做。因为用 ANNOVAR 来出来一个具有几百万个SNP的GWAS会很费事，并且 ANNOVAR主要不是做这个用的。
 
 ```
-zcat bbj.copd.gwas.gz | awk '{print $3}' | sed '1 s/SNPID/SNP/; s/_/:/' > bbj.copd.snpid
-grep -hwf bbj.copd.snpid ukb_imp/mfi/ukb_mfi_chr*_v3.txt > bbj.copd.ukb
-python scripts/join_file.py -i "bbj.copd.gwas.gz,SPACE,0 bbj.copd.ukb,SPACE,0" -o merged.txt
+trait=CAD # 比如说
+for chr in {1..22}; do # 对每一个染色体，分别生成一个 .cmd 的命令文件，然后可以submit 到 服务器上运行
+	echo "#!/bin/bash -l
+	zcat $trait.gz | awk c=$chr 'NR==1 || $1==c' | sed '1 s/SNPID/SNP/; s/_/:/' > $trait.chr$chr.tmp
+	awk '{print $3}' $trait.chr$chr.tmp > $trait.chr$chr.snpid
+	fgrep -wf $trait.chr$chr.snpid ukb_imp_mfi/ukb_mfi_chr$chr_v3.txt | awk '{print $1,$2}' | sed 's/:/_/' > $trait.chr$chr.ukb
+	python join_file.py -i \"$trait.chr$chr.tmp,SPACE,2 $trait.chr$chr.ukb,SPACE,0\" -o $trait.chr$chr.merged
+	done
+	" > chr$chr.cmd
 ```
 
 <br/>

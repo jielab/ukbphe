@@ -5,7 +5,7 @@
 
 这是初二生物学课本里面的内容哦！
 
-![Figure 1](./pictures/middle.jpg)
+![middle school](./pictures/middle.jpg)
 
 #1.1 HAPMAP3 genotype 数据, 一般作为 LD 计算的 reference panel
 ```
@@ -25,15 +25,6 @@
 打开 https://www.internationalgenome.org/data，在 Available data 下面，点击该页面 Phase 3 对应的 VCF 链接，
 可以看到以 “ALL.” 开头的文件，可以一个一个直接点击链接下载。
 也可以用下面的命令下载, 并且随之将下载的VCF文件转换为PLINK格式
-
-由于 chrX, chrY, chrMT 的文件名字跟其它染色体不同，用下面的命令下载的时候，里面的文件名字也需要相应调整。 
-
-for chr in {1..22}; do
-  wget ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr$chr.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz
-  wget ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr$chr.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz.tbi
-  mv ALL.chr$chr.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz g1k.chr$chr.gz # 简化文件名字
-  plink --vcf g1k.chr$chr.vcf.gz --make-bed --out g1k.chr$chr # 一般没有必要这样做，因为PLINK和很多软件都可以直接读取VCF文件
-done  
 
 除了下载上述页面上以 “ALL.” 开头的 VCF 文件，倒数第二个 integrated_call_samples_v3.20130502.ALL.panel 文件罗列了每一个样本的人群（pop）和人种 (super_pop)，以及性别。
 根据这个文件，可以提取特定人种的样本，比如：
@@ -62,7 +53,7 @@ awk '{if(array[$2]=="Y") {i++; $2=$2".DUP"i}; print $0; array[$2]="Y"}' chr1.bim
 
 # #2.  提取 UKB 表型数据
 
-![Figure 2](./pictures/ukb-browse.png)
+![UKB](./pictures/ukb.png)
 
 #2.1 首先要明确，UKB的基因数据很大，所有申请者都能得到一样的数据，一般下载到服务器上去储存和使用。
 但是，对于基因型的 summary statistics，是可以人人免费下载的。UKB里面的将近一亿个 SNP 的 rsID, CHR, POS, MAF等信息，就可以点击上面这个页面上的 Imputation，然后弹出来的页面上会有下面这句话：
@@ -75,9 +66,11 @@ The information scores and minor allele frequency data for the imputed genotypes
 
 #2.2 只有一列或者少数计列的一般表型（age, sex, race, bmi, etc.）
 
-WINDOWS电脑建议安装系统自带的Ubuntu Linux系统，cd /mnt/d/。下载UKB小程序ukbunpack, unbconv, encoding.ukb 等。
-苹果电脑，参考 https://github.com/spiros/docker-ukbiobank-utils。
+WINDOWS电脑建议安装系统自带的 Ubuntu Linux系统，燃火用 cd /mnt/d/ 这样的命令进入 D 盘。
 打开ukbiobank.ac.uk, 点击 Data Showcase 菜单。然后点击第一个“Essential Information”，阅读 Access and using your data。
+下载UKB小程序ukbunpack, unbconv, encoding.ukb 等。
+苹果电脑，参考 https://github.com/spiros/docker-ukbiobank-utils。
+
 写一个 VIP.fields.txt 文件，列出想提取的变量和对应的 data-field，比如 21022 age
 
 ```
@@ -155,7 +148,7 @@ trait_inv = qnorm((rank(trait_res,na.last="keep")-0.5) / length(na.omit(trait_re
 
 # #3. GWAS 运行
 
-![GWAS](./pictures/GWAS-new.jpg)
+![GWAS](./pictures/GWAS.jpg)
 
 <br/>
 
@@ -229,17 +222,12 @@ for chr in {1..22} X; do
   tail -1 ukb_mfi_chr${chr}_v3.txt | awk -v c=$chr '{print c, $3}' >>  ukb.chrom.pos.b37   
 done
 ```
-![Figure mhplot](./pictures/mhplot.png)
-
 
 #4.2 从GWAS catalog (https://www.ebi.ac.uk/gwas) 寻找该GWAS的文章和SNP，用 compareP.R 和 compareP.f.R 确认该GWAS和已发表的结果大致相同。
 下面的这个图，显示某篇已经发表的CAD的GWAS报道的SNP，跟UKB的结果比较。由于那个文件里面没有P值，所以只画出了 EAF 和 BETA这两个比较图。
 
 已发表的文章中的图
 ![Figure beta](./pictures/beta.jpg)
-
-我们的数据画出来的图
-![Figure beta2](./pictures/compareP.png)
 
 
 #4.3 提取GWAS里面的的统计显著性（significant）信号，添加简单的注释（比如所在的基因名称）

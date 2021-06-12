@@ -382,6 +382,7 @@ done
 ```
 英国 UK biobank: https://ukbiobank.ac.uk
 美国 All of US (奥巴马总统称之为 Precision Medicine Initiative): https://databrowser.researchallofus.org/
+斯坦福大学的 GlobalBiobankEngine 和 nanopore 数据分析等： https://github.com/rivas-lab
 
 基因注释信息浏览器：
 TopMed browser: https://bravo.sph.umich.edu/
@@ -389,8 +390,14 @@ Gnomad browser: https://gnomad.broadinstitute.org/
 UCSC genome browser: https://www.genome.ucsc.edu/
 dbSNP: https://www.ncbi.nlm.nih.gov/snp/
 
-斯坦福大学的 GlobalBiobankEngine 和 nanopore 数据分析等： https://github.com/rivas-lab
-芬兰赫尔辛基大学GWAS课程：https://www.mv.helsinki.fi/home/mjxpirin/GWAS_course/
+GWAS 入门介绍
+2008. JAMA. How to interpret a genome-wide association study (pubmed.ncbi.nlm.nih.gov/18349094/)
+2020. NEJM. Genomewide Association Study of Severe Covid-19 with Respiratory Failure (https://www.nejm.org/doi/full/10.1056/NEJMoa2020283)
+芬兰赫尔辛基大学 GWAS 课程：https://www.mv.helsinki.fi/home/mjxpirin/GWAS_course/
+
+Mendelian Randomization 入门推荐文章两篇
+2017. Statistical methods to detect pleiotropy in human complex traits (pubmed.ncbi.nlm.nih.gov/29093210/)
+2019. Meta-analysis and Mendelian randomization: A review (pubmed.ncbi.nlm.nih.gov/30861319/)
 
 ```
 

@@ -35,7 +35,7 @@ awk '$3=="EAS" {print $1,$1}' integrated_call_samples_v3.20130502.ALL.panel > g1
 
 不论是有所有2504个人基因数据的PLINK文件，还是只有某一个人种的PLINK文件，每个染色体都是单独的文件。
 后续跑 GWAS 或提取 PRS 的时候，也是每条染色体的数据分开来跑，这样就可以进行并行计算（parallel computing）。
-一般不建议把所有的染色体的数据合并成一个完整的单一的基因数据，毕竟8千多万个SNP，文件太大了，很多软件根本运行不了。
+一般不建议把所有的染色体的数据合并成一个完整的单一的基因数据，毕竟将近一个亿的SNP，文件太大了，很多软件根本运行不了。
 
 ```
 
@@ -55,7 +55,7 @@ awk '{if(array[$2]=="Y") {i++; $2=$2".DUP"i}; print $0; array[$2]="Y"}' chr1.bim
 
 ![UKB](./pictures/ukb.png)
 
-#2.1 首先要明确，UKB的基因数据很大，所有申请者都能得到一样的数据，一般下载到服务器上去储存和使用。
+#2.1 首先要明确，UKB的基因数据很大，所有申请者都能得到一样的数据（样本的ID不一样），一般下载到服务器上去储存和使用。
 但是，对于基因型的 summary statistics，是可以人人免费下载的。UKB里面的将近一亿个 SNP 的 rsID, CHR, POS, MAF等信息，就可以点击上面这个页面上的 Imputation，然后弹出来的页面上会有下面这句话：
 The information scores and minor allele frequency data for the imputed genotypes (computed with QCTOOL) can also be downloaded in Resource 1967。点击链接下载就行了。
 
@@ -66,27 +66,30 @@ The information scores and minor allele frequency data for the imputed genotypes
 
 #2.2 只有一列或者少数计列的一般表型（age, sex, race, bmi, etc.）
 
-WINDOWS电脑建议安装系统自带的 Ubuntu Linux系统，燃火用 cd /mnt/d/ 这样的命令进入 D 盘。
+WINDOWS电脑建议安装系统自带的 Ubuntu Linux系统，然后用 cd /mnt/d/ （而不是 D:/）进入 D 盘。
 打开ukbiobank.ac.uk, 点击 Data Showcase 菜单。然后点击第一个“Essential Information”，阅读 Access and using your data。
-下载UKB小程序ukbunpack, unbconv, encoding.ukb 等。
-苹果电脑，参考 https://github.com/spiros/docker-ukbiobank-utils。
+读完整个文档的话，你就什么都知道了。苹果电脑，参考 https://github.com/spiros/docker-ukbiobank-utils
 
-写一个 VIP.fields.txt 文件，列出想提取的变量和对应的 data-field，比如 21022 age
 
 ```
+# 先解压表型数据的大文件
 unkunpack ukb42156.enc 48?0?6475f14648f8a114?5279c06b64a78aa70454efb55b00cc1510e5?db372
+
+#写一个 VIP.fields.txt 文件，列出想提取的变量和对应的 data-field，比如 21022 age
 awk '{print $1}' ukb.vip.fields > ukb.vip.fields.id
+
+#确认没有重复的 data-field
 sort ukb.vip.fields.id | uniq -d
+
+# 提前你的VIP 文件里面列出的变量
 ukbconv ukb42156.enc_ukb r -iukb.vip.fields.id -ovip
 
-```
 
-```
-打开R ，用下面的几行代码，将上面生成的 vip.tab 数据读入，并且给每个变量赋予正确的名字。
-下面的XXXX是文件路径，上述Linux 系统生成的 vip.r文件，如果在Windows 系统里面运行R，需要修改文件的路径。
+# 打开R ，用下面的几行代码，将上面生成的 vip.tab 数据读入，并且给每个变量赋予正确的名字。
+上述Linux 系统生成的 vip.r文件，如果在Windows 系统里面运行R，需要将里面的 /mnt/d 改为 D:/。
 
-source("D:/XXXX/vip.r")
-pnames <- read.table("D:/XXXX/ukb.vip.fields", header=F)
+source("D:/vip.r")
+pnames <- read.table("D:/ukb.vip.fields", header=F)
 pnames$V1 <- paste0("f.", pnames$V1, ".0.0")
 phe <- subset(bd, select=grep("f.eid|\\.0\\.0", names(bd)))
 
@@ -173,11 +176,11 @@ UKB GWAS 完整的分析结果，网上发布
  A. 美国哈佛大学：http://www.nealelab.is/uk-biobank 
  B. 英国爱丁堡大学：geneatlas: http://geneatlas.roslin.ed.ac.uk
 
-日本生物样本库的 GWAS： http://jenger.riken.jp/en/result 
+日本生物样本库的 GWAS：http://jenger.riken.jp/en/result 
 ** 对于这上面的每一个表型，点击最后一列，查看曼哈顿图和QQ图，然后点击那个页面上的 Download summary statistics。否则，前面一页的 download 下来的数据没有 rsID.
 
 各大专项疾病领域的GWAS，比如：
- A. 哈佛大学的CVD knowlege portal: https://cvd.hugeamp.org/
+ A. 哈佛大学的CVD knowlege portal: https://hugeamp.org/
  B. 南加州大学的神经影像基因组国际合作团队：http://enigma.ini.usc.edu/
 ```
 
@@ -307,12 +310,12 @@ LDpred2 https://privefl.github.io/bigsnpr/articles/LDpred2.html
 <br/>
 
 
-# #5. 多个GWAS 之间的分析（LDSC-GSMR-TWAS “三件套” 方案）
+# #5. 多个GWAS 之间的分析（genetic correlation -> Mendelian Randomization -> TWAS 三件套）
 <br/>
 
 #5.1. genetic correlation 分析, LDSC (https://github.com/bulik/ldsc)
 
-其实，美国著名的 Broad Insitute ，已经用 LDSC 把几百个 traits 的 h2 和他们两两之间的基因相关性都计算出来，公布出来了 http://ldsc.broadinstitute.org 
+其实，美国的 Broad Insitute ，已经用 LDSC 把几百个 traits 的 h2 和他们两两之间的基因相关性都计算出来，公布出来了 http://ldsc.broadinstitute.org 
 
 ```
 source activate ldsc
@@ -329,7 +332,7 @@ done
 
 #5.2. 因果分析 Mendelian Randomization
 
-MR的文章已经发表了千万篇，方法至少十几种。
+MR的文章已经发表了无数篇，方法至少十几种。
 
 最简单的就是使用 MendelianRandomization 的R包：https://wellcomeopenresearch.org/articles/5-252/v2
 
@@ -395,12 +398,12 @@ GWAS 入门介绍
 2020. NEJM. Genomewide Association Study of Severe Covid-19 with Respiratory Failure (https://www.nejm.org/doi/full/10.1056/NEJMoa2020283)
 芬兰赫尔辛基大学 GWAS 课程：https://www.mv.helsinki.fi/home/mjxpirin/GWAS_course/
 
-Mendelian Randomization 入门文章两篇，入门R包两个
+Mendelian Randomization 入门介绍
 2017. Statistical methods to detect pleiotropy in human complex traits (pubmed.ncbi.nlm.nih.gov/29093210/)
 2019. Meta-analysis and Mendelian randomization: A review (pubmed.ncbi.nlm.nih.gov/30861319/)
-2020. TwoSampleMR R包 https://github.com/MRCIEU/TwoSampleMR
-2021. MendelianRandomization R包 （https://wellcomeopenresearch.org/articles/5-252/v2）
 
 ```
+
+学会使用公开的 GWAS 数据，在前人的基础上继续向前走！
 
 ![Figure portal](./pictures/portal.png)

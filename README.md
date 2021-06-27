@@ -370,6 +370,7 @@ mr_plot(mr_input(XGb, XGse, YGb, YGse))
 
 ![Figure beta-Wrong](./pictures/beta.wrong.png)
 <br/>
+<br/>
 
 #5.3. TWAS (http://gusevlab.org/projects/fusion/)
 

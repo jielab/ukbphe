@@ -334,10 +334,6 @@ done
 
 MR的文章已经发表了无数篇，方法至少十几种。
 
-最简单的就是使用 MendelianRandomization 的R包：https://wellcomeopenresearch.org/articles/5-252/v2
-
-还有一个特别针对 UKB 处理海量数据的 TwoSampleMR 的R包：https://mrcieu.github.io/TwoSampleMR/index.html
-打开这个链接后，点击上面菜单中的 Guide，然后在 Overview 那一段有下面这句话 Extract the instruments from the *IEU GWAS database* for the outcomes of interest。
 
 我们组现在采用的是 GSMR (https://cnsgenomics.com/software/gcta/#GSMR)。这不是一个R包，而是一个成熟的软件 GCTA中的一部分，因此运行起来会比较快。
 SMR 需要用到参考基因组计算 LD 的软件，我们建议用 hapmap3 的数据作为 LD reference。
@@ -357,6 +353,22 @@ echo "$trait2 $trait2.gcta.txt" > test.outcome
 gcta64 --bfile hapmap3/g1k.b37 --gsmr-file test.exposure test.outcome --gsmr-direction 2 --gwas-thresh 1e-5 --effect-plot --out test
 
 ```
+
+其实，最简单的是使用 MendelianRandomization 的R包：https://wellcomeopenresearch.org/articles/5-252/v2
+还有一个特别针对 UKB 处理海量数据的 TwoSampleMR 的R包：https://mrcieu.github.io/TwoSampleMR/index.html
+打开这个链接后，点击上面菜单中的 Guide，然后在 Overview 那一段有下面这句话 Extract the instruments from the *IEU GWAS database* for the outcomes of interest。
+GSMR 分析得到的文件，可以通过下面的R代码，导入到MendelianRandomization 的R包，这样就不用自己去生产 X 和Y 的数据。
+
+```
+source('gsmr_plot.r')
+gsmr.data = read_gsmr_data('cad.t2d.eff_plot.gz'); str(gsmr.data)
+eff = gsmr_snp_effect(gsmr.data, "t2d", "cad"); str(eff)
+XGb = eff$bzx; XGse = eff$bzx_se; YGb = eff$bzy; YGse = eff$bzy_se
+mr_plot(mr_input(XGb, XGse, YGb, YGse))
+```
+虽然 MendelianRandomization 的R包需要的数据很简单，就4列，分别是 X 和 Y 的 BETA 和 SE，但是 X 的BETA必须是正数，不要出现下面的情况。
+
+![Figure betaw-rong](./pictures/beta-wrong.png)
 <br/>
 
 #5.3. TWAS (http://gusevlab.org/projects/fusion/)

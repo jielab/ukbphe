@@ -336,7 +336,7 @@ MR的文章已经发表了无数篇，方法至少十几种。
 
 
 我们组现在采用的是 GSMR (https://cnsgenomics.com/software/gcta/#GSMR)。这不是一个R包，而是一个成熟的软件 GCTA中的一部分，因此运行起来会比较快。
-SMR 需要用到参考基因组计算 LD 的软件，我们建议用 hapmap3 的数据作为 LD reference。
+GSMR 需要用到参考基因组计算 LD 的软件，我们建议用 hapmap3 的数据作为 LD reference。
 如果用上述提取的千人基因组数据作为 LD 参考，由于数据是按照染色体分开的，就需要用 --mbfile （而不是 --bfile）。
 GCTA 对文件的格式有比较固定和严格的要求，SNP A1 A2 freq b se p N 必须按照这个顺序，请参考 GCTA 官网
 

@@ -15,7 +15,6 @@
 所以下载后解压后需要将那个 .map 文件先用 liftOver 转化为 b37 格式，然后用 PLINK 生成 bed/bim/fam 文件。
 这一步已经完成，生成的 PLINK 格式文件已经放到百度网盘，请大家下载。
 这个基因数据将作为我们组进行 LDSC 和 GSMR 分析的标准文件。
-
 ```
 <br/>
 
@@ -45,9 +44,7 @@ awk '$3=="EAS" {print $1,$1}' integrated_call_samples_v3.20130502.ALL.panel > g1
 ```
 cp chr1.bim chr1.bim.COPY
 awk '{if(array[$2]=="Y") {i++; $2=$2".DUP"i}; print $0; array[$2]="Y"}' chr1.bim.COPY > chr1.bim 
-
 ```
-<br/>
 <br/>
 
 
@@ -92,7 +89,6 @@ source("D:/vip.r")
 pnames <- read.table("D:/ukb.vip.fields", header=F)
 pnames$V1 <- paste0("f.", pnames$V1, ".0.0")
 phe <- subset(bd, select=grep("f.eid|\\.0\\.0", names(bd)))
-
 ```
 <br/>
 
@@ -106,7 +102,6 @@ sed -i 's/"//g icd.tab
 # 将 icd.tab 文件整合为两列，便于读入R。
 cat icd.tab | sed -e 's/\tNA//g' -e 's/\t/,/2g' | \
 awk '{ if(NR==1) print "IID icd"; else if (NF==1) print $1 " NA"; else print $0"," }' > icd.2cols
-
 ```
 <br/>
 
@@ -118,16 +113,13 @@ awk '{ if(NR==1) print "IID icd"; else if (NF==1) print $1 " NA"; else print $0"
 ```
 trait_res = residuals(lm(trait ~ age+sex+PC1+PC2, na.action=na.exclude)
 trait_inv = qnorm((rank(trait_res,na.last="keep")-0.5) / length(na.omit(trait_res)))
-
 ```
-<br/>
 <br/>
 
 
 # #3. GWAS 运行
 
 ![GWAS](./pictures/GWAS.jpg)
-
 <br/>
 
 #3.1 专人在服务器上运行
@@ -139,7 +131,6 @@ for chr in {1..22}; do
 ```
 
 上述命令顺利跑完后，确认生成的文件没有问题后，可以把所有的染色体的数据串到一起，形成一个单一的 XXX.gwas.gz 文件。鉴于2千多万个SNP，文件太大，我们一般只保留：P<0.01的SNP 以及那些在Hapmap3 里面的SNP。最终合并成的 XXX.gwas.gz 文件用 TAB 分割，CHR:POS 排好序，要不然 LocusZoom 那样的软件不能处理。也可以用 tabix -f -S 1 -s 1 -b 2 -e 2 XXX.gwas.gz 对数据进行索引，便于 LocalZoom 那样的软件去处理。
-
 <br/>
 
 #3.2 公开的GWAS数据进行练手，或对比
@@ -158,7 +149,6 @@ UKB GWAS 完整的分析结果，网上发布
  A. 哈佛大学的CVD knowlege portal: https://hugeamp.org/
  B. 南加州大学的神经影像基因组国际合作团队：http://enigma.ini.usc.edu/
 ```
-
 <br/>
 
 #3.3 网上下载下来的GWAS数据的格式化
@@ -178,12 +168,8 @@ for chr in {1..22}; do # 对每一个染色体，分别生成一个 .cmd 的命�
 	python join_file.py -i \"$trait.chr$chr.tmp,SPACE,2 $trait.chr$chr.ukb,SPACE,0\" -o $trait.chr$chr.merged
 	" > chr$chr.cmd
 done
-
 ```
-
 <br/>
-<br/>
-
 
 
 # #4. 单个 GWAS 数据的分析
@@ -252,7 +238,6 @@ bedtools intersect -a A.bed -b B.bed -wo
 ```
 
 GWAS 的数据直接导入 LocusZOOM (http://locuszoom.org), 轻松得到 Manhattan Plot, Top Loci Table, 以及任何基因组区域的 locuszoom 图。有关问题，请参考我跟对方的沟通 https://github.com/statgen/locuszoom-hosted/issues/19
-
 <br/>
 
 #4.5 生成 PRS
@@ -280,7 +265,6 @@ PRSice: https://github.com/choishingwan/PRSice
 LDpred2 https://privefl.github.io/bigsnpr/articles/LDpred2.html
 ```
 <br/>
-<br/>
 
 
 # #5. 多个GWAS 之间的分析（genetic correlation -> Mendelian Randomization -> TWAS 三件套）
@@ -295,7 +279,6 @@ LDpred2 https://privefl.github.io/bigsnpr/articles/LDpred2.html
 #2 GSMR：gcta64 --bfile hapmap3/g1k.b37 --gsmr-file test.exposure test.outcome --gsmr-direction 2 --gwas-thresh 1e-5 --effect-plot --out test
 
 #3 TWAS： Rscript $fusion/FUSION.assoc_test.R --sumstats $trait.sumstats.gz --chr $chr --out $trait.$tissue.chr$chr.txt --weights $dir_gt/$tissue.P01.pos --weights_dir $dir_gt --ref_ld_chr $dir_ld/1000G.EUR.
-
 ```
 
 #5.1. genetic correlation 分析, LDSC (https://github.com/bulik/ldsc)
@@ -330,11 +313,8 @@ mr_plot(mr_input(XGb, XGse, YGb, YGse))
 
 ![Figure beta-Wrong](./pictures/beta.wrong.png)
 <br/>
-<br/>
 
 #5.3. TWAS (http://gusevlab.org/projects/fusion/)
-
-<br/>
 <br/>
 
 
@@ -358,7 +338,6 @@ GWAS 入门介绍
 Mendelian Randomization 入门介绍
 2017. Statistical methods to detect pleiotropy in human complex traits (pubmed.ncbi.nlm.nih.gov/29093210/)
 2019. Meta-analysis and Mendelian randomization: A review (pubmed.ncbi.nlm.nih.gov/30861319/)
-
 ```
 
 学会使用公开的 GWAS 数据，借力、空手道、站在巨人的肩膀上！

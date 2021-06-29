@@ -213,20 +213,17 @@ for chr in {1..22}; do
    plink1.9 --vcf g1k.chr$chr.vcf.gz --clump $trait.gwas.txt --clump-p1 5e-08 --clump-p2 5e-08 --clump-kb 1000 --clump-r2 0.2 --out $trait.chr$chr
    awk '$1 !="" {print $3,$1, $4,$5}' $trait.chr$chr.clumped > $trait.chr$chr.top
 done
-
-## 通过LD的计算来找到GWAS数据里面的independent top hits，也有一些问题（比如g1k的LD不是金标准，r2也不是最合理的筛选办法），并且计算量很大。 
-## 下面这个简单的代码可以寻找GWAS数据里面每1MB区间的top SNP，不考虑LD。假设GWAS的第1，2，3 列分别是 SNP, CHR, POS，最后一列是P。
-zcat ABC.gwas.gz | awk 'NR==1 || $NF<5e-8 {b=sprintf("%.0f",$3/1e6); print $1,$2,$3,$NF,b}' | sort -k 2,2n -k 5,5n -k 4,4g | awk '{if (arr[$NF] !="Y") print $0; arr[$NF] ="Y"}' 
 ```
 <br/>
 
 #4.4 如果不考虑 SNP之间的LD
 
-就是单纯的根据 P值和 CHR：POS 将所有的显著信号划分为1MB的片区，可以用下面的 AWK 命令。
-该命令假设GWAS数据的第1，2，3 列 分别是 CHR, POS, SNP，最后一列是P 值。
+通过LD的计算来找到GWAS数据里面的independent top hits，也有一些问题（比如g1k的LD不是金标准，r2也不是最合理的筛选办法），并且计算量很大。 
+下面这个简单的代码可以寻找GWAS数据里面每1MB区间的top SNP，不考虑LD。
 ```
-awk '{b=sprintf("%.0f",$2/1e6); print $3,$1,$2,$NF,b}' TRAIT.p5e-8 | sort -k 2,2n -k 5,5n -k 4,4g | awk '{if (arr[$NF] !="Y") print $0; arr[$NF] ="Y"}' > TRAIT.loci
-
+# 假设GWAS的第1，2，3 列分别是 SNP, CHR, POS，最后一列是P。
+zcat ABC.gwas.gz | awk 'NR==1 || $NF<5e-8 {b=sprintf("%.0f",$3/1e6); print $1,$2,$3,$NF,b}' | \
+	sort -k 2,2n -k 5,5n -k 4,4g | awk '{if (arr[$NF] !="Y") print $0; arr[$NF] ="Y"}' 
 ```
 
 要把上述得到的显著区域跟别人已经发表的 SNP进行比较，看是不是有重叠（1MB范围之内的重叠都算），可以用下面的 bedtools 命令。 
@@ -237,7 +234,8 @@ awk '{b=sprintf("%.0f",$2/1e6); print $3,$1,$2,$NF,b}' TRAIT.p5e-8 | sort -k 2,2
 bedtools intersect -a A.bed -b B.bed -wo
 ```
 
-GWAS 的数据直接导入 LocusZOOM (http://locuszoom.org), 轻松得到 Manhattan Plot, Top Loci Table, 以及任何基因组区域的 locuszoom 图。有关问题，请参考我跟对方的沟通 https://github.com/statgen/locuszoom-hosted/issues/19
+最后，GWAS 的数据直接导入 LocusZOOM (http://locuszoom.org), 轻松得到 Manhattan Plot, Top Loci Table, 以及任何基因组区域的 locuszoom 图。
+有关问题，请参考我跟对方的沟通 https://github.com/statgen/locuszoom-hosted/issues/19
 <br/>
 
 #4.5 生成 PRS

@@ -196,7 +196,8 @@ done
 但是 X 的BETA最好是正数，免得出来这样看起来很强的“假阳性”，也会有“假阴性”。
 ![Figure beta-Wrong](./pictures/beta.wrong.png)
 
-请参照我的代码 compareB.R 和 compareB.f.R， 快速画出下面这样的图。
+请参照 scripts 文件夹里面的 compareB.R 代码， 该代码可以快速画出下面这样的图。
+compareB.R 相当于一个前台，让用户提供两个比较的文件的具体信息。然后，前台会把用户提交的信息交给后端的 compareB.f.R，不要去碰这个后端的代码。
 ![Figure beta](./pictures/beta.jpg)
 
 <br/>

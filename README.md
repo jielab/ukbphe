@@ -279,7 +279,6 @@ LDpred2 https://privefl.github.io/bigsnpr/articles/LDpred2.html
 From GWAS to Function: Using Functional Genomics to Identify the Mechanisms Underlying Complex Diseases
 
 ![Figure group-3](./pictures/group-3.jpg)
-![Figure beta](./pictures/beta.jpg)
 
 还有一篇2020年的综述，也值得一读：From GWAS to Function: Using Functional Genomics to Identify the Mechanisms Underlying Complex Diseases
 

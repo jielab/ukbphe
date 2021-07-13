@@ -277,8 +277,12 @@ LDpred2 https://privefl.github.io/bigsnpr/articles/LDpred2.html
 <br/>
 关于“三件套”之间的逻辑关系，2021年哈佛大学公卫学院的梁黎明，以asthma为例，写了一篇文章进行了讲述。
 From GWAS to Function: Using Functional Genomics to Identify the Mechanisms Underlying Complex Diseases
+
 ![Figure group-3](./pictures/group-3.jpg)
+![Figure beta](./pictures/beta.jpg)
+
 还有一篇2020年的综述，也值得一读：From GWAS to Function: Using Functional Genomics to Identify the Mechanisms Underlying Complex Diseases
+
 ![Figure function](./pictures/function.jpg) 
 
 

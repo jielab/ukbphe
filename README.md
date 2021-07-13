@@ -277,9 +277,10 @@ LDpred2 https://privefl.github.io/bigsnpr/articles/LDpred2.html
 <br/>
 关于“三件套”之间的逻辑关系，2021年哈佛大学公卫学院的梁黎明，以asthma为例，写了一篇文章进行了讲述。
 From GWAS to Function: Using Functional Genomics to Identify the Mechanisms Underlying Complex Diseases
-![group-3](./pictures/group-3.jpg)
+![Figure group-3](./pictures/group-3.jpg)
 还有一篇2020年的综述，也值得一读：From GWAS to Function: Using Functional Genomics to Identify the Mechanisms Underlying Complex Diseases
-![function](./pictures/function.jpg) 
+![Figure function](./pictures/function.jpg) 
+
 
 请参照 scripts 文件夹里面的 001.gc-mr-twas.sh 代码。三件套，基本就是3行代码的事。其它的代码都是胶水（glue）和信号灯（when and who）。
 还有就是，前面做数据的格式化，后面做分析结果汇总和画图，那样的代码。

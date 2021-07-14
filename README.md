@@ -135,6 +135,9 @@ for chr in {1..22}; do
 
 #3.2 公开的GWAS数据进行练手，或对比
 
+如果下载下来的数据是VCF 格式，可以用 bcftools query 提取需要的 data fileds，生成 TXT 格式。
+bcftools query 的使用，请参考 http://samtools.github.io/bcftools/bcftools.html
+ 
 ```
 最经典的，历史悠久的 GWAS Catalog: https://www.ebi.ac.uk/gwas
 
@@ -285,7 +288,7 @@ Investigating asthma heterogeneity through shared and distinct genetics: Insight
 ![Figure function](./pictures/function.jpg) 
 
 
-请参照 scripts 文件夹里面的 001.gc-mr-twas.sh 代码。三件套，基本就是3行代码的事。其它的代码都是胶水（glue）和信号灯（when and who）。
+三件套，基本就是3行代码的事。其它的代码都是胶水（glue）和信号灯（when and who）。
 还有就是，前面做数据的格式化，后面做分析结果汇总和画图，那样的代码。
 
 ```
@@ -295,6 +298,22 @@ Investigating asthma heterogeneity through shared and distinct genetics: Insight
 
 #3 TWAS： Rscript $fusion/FUSION.assoc_test.R --sumstats $trait.sumstats.gz --chr $chr --out $trait.$tissue.chr$chr.txt --weights $dir_gt/$tissue.P01.pos --weights_dir $dir_gt --ref_ld_chr $dir_ld/1000G.EUR.
 ```
+
+大家在弄懂了一个 X 和一个 Y 之间的分析后，要学会让计算机去 “傻干”，去没完没了的循环往复。
+请参照 scripts 文件夹里面的 001.gc-mr-twas.sh 代码，我就用了 for tx in traits_x 然后里面再套 for y in traits_y，这样就能把几十个 X 和 几十个 Y 一下按照“流水线作业” 跑完。
+这种流水线的好处是：如果有错，就全部错了，就很容易发现。
+经过上述分析，得出一堆 x1, x2, x3 ... 跟一堆 y1, y2, y3 ... 两两之间的 BETA 和 P 值后，汇总到一个 TXT 文件里，就可以用下面几行R 代码:
+```
+library(corrplot); library(reshape2)
+dat <- read.table('my-summary.gsmr', header=T, as.is=T)
+beta <- acast(dat, Outcome ~ Exposure, value.var='bxy'); b1cor[is.na(b1cor)] =0
+pval <- acast(dat, Outcome ~ Exposure, value.var='p'); p1cor[is.na(p1cor)] =1
+corrplot(beta, is.corr=F, method='color', type='full', addCoef.col='black', number.cex=0.7, p.mat=pval, sig.level=1e-03, insig="pch", pch.col="green", pch.cex=2, tl.col="black", tl.srt=45, outline=T)
+```
+画出下面这样的图
+
+![Figure corrplot](./pictures/corrplot.png)
+
 
 #5.1. genetic correlation 分析, LDSC (https://github.com/bulik/ldsc)
 

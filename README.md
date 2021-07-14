@@ -276,11 +276,11 @@ LDpred2 https://privefl.github.io/bigsnpr/articles/LDpred2.html
 # #5. 多个GWAS 之间的分析（genetic correlation -> Mendelian Randomization -> TWAS 三件套）
 <br/>
 关于“三件套”之间的逻辑关系，2021年哈佛大学公卫学院的梁黎明，以asthma为例，写了一篇文章进行了讲述。
-From GWAS to Function: Using Functional Genomics to Identify the Mechanisms Underlying Complex Diseases
+Investigating asthma heterogeneity through shared and distinct genetics: Insights from genome-wide cross-trait analysis (http://https://pubmed.ncbi.nlm.nih.gov/32693092/)
 
 ![Figure group-3](./pictures/group-3.jpg)
 
-还有一篇2020年的综述，也值得一读：From GWAS to Function: Using Functional Genomics to Identify the Mechanisms Underlying Complex Diseases
+还有一篇2020年的综述，也值得一读：From GWAS to Function: Using Functional Genomics to Identify the Mechanisms Underlying Complex Diseases (http://https://pubmed.ncbi.nlm.nih.gov/32477401/)
 
 ![Figure function](./pictures/function.jpg) 
 

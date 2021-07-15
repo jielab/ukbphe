@@ -9,7 +9,7 @@
 
 ## #1.1 HAPMAP3 genotype 数据, 一般作为 LD 计算的 reference panel
 
-> 打开 https://www.broadinstitute.org/medical-and-population-genetics/hapmap-3， 
+> 打开 <https://www.broadinstitute.org/medical-and-population-genetics/hapmap-3>， 
 > 点击 How To Download This Release 下面的 A. SNP Genotype Data 段落的中间3个链接。
 > 文件名字里面有 "b36"，现在一般都用 b37（比如 UK Biobank），甚至有的用 b38，
 > 所以下载后解压后需要将那个 .map 文件先用 liftOver 转化为 b37 格式，然后用 PLINK 生成 bed/bim/fam 文件。
@@ -60,28 +60,28 @@ WINDOWS电脑建议安装系统自带的 Ubuntu Linux系统，然后用 cd /mnt/
 读完整个文档的话，你就什么都知道了。苹果电脑，参考 https://github.com/spiros/docker-ukbiobank-utils
 
 
-```
-# 先解压表型数据的大文件
-unkunpack ukb42156.enc 48?0?6475f14648f8a114?5279c06b64a78aa70454efb55b00cc1510e5?db372
+1. 先解压表型数据的大文件
+    - unkunpack ukb42156.enc 48?0?6475f14648f8a114?5279c06b64a78aa70454efb55b00cc1510e5?db372
 
-#写一个 VIP.fields.txt 文件，列出想提取的变量和对应的 data-field，比如 21022 age
-awk '{print $1}' ukb.vip.fields > ukb.vip.fields.id
+2. 写一个 VIP.fields.txt 文件，列出想提取的变量和对应的 data-field，比如 
+    - 21022 age
 
-#确认没有重复的 data-field
-sort ukb.vip.fields.id | uniq -d
+3. 然后用下面的命令，提取出该文件的第一列
+    - awk '{print $1}' ukb.vip.fields > ukb.vip.fields.id
 
-# 提前你的VIP 文件里面列出的变量
-ukbconv ukb42156.enc_ukb r -iukb.vip.fields.id -ovip
+4. 确认没有重复的 data-field
+    - sort ukb.vip.fields.id | uniq -d
 
+4. 提前VIP 文件里面列出的变量
+    - ukbconv ukb42156.enc_ukb r -iukb.vip.fields.id -ovip
+	
+5. 打开R ，用下面的几行代码，将上面生成的 vip.tab 数据读入，并且给每个变量赋予正确的名字。
+    - source("D:/vip.r")
+    - pnames <- read.table("D:/ukb.vip.fields", header=F)
+    - pnames$V1 <- paste0("f.", pnames$V1, ".0.0")
+    - phe <- subset(bd, select=grep("f.eid|\\.0\\.0", names(bd)))
 
-# 打开R ，用下面的几行代码，将上面生成的 vip.tab 数据读入，并且给每个变量赋予正确的名字。
-上述Linux 系统生成的 vip.r文件，如果在Windows 系统里面运行R，需要将里面的 /mnt/d 改为 D:/。
-
-source("D:/vip.r")
-pnames <- read.table("D:/ukb.vip.fields", header=F)
-pnames$V1 <- paste0("f.", pnames$V1, ".0.0")
-phe <- subset(bd, select=grep("f.eid|\\.0\\.0", names(bd)))
-```
+6. 上述Linux 系统生成的 vip.r文件，如果在Windows 系统里面运行R，需要将里面的 /mnt/d 改为 D:/。
 <br/>
 
 ## #2.3 跨越很多列的数据，比如 ICD (data field 42170）

@@ -137,7 +137,7 @@ WINDOWS电脑建议安装系统自带的 Ubuntu Linux系统，然后用 cd /mnt/
 > > - 哈佛大学的CVD knowlege portal: https://hugeamp.org/
 > > - 南加州大学的神经影像基因组国际合作团队：http://enigma.ini.usc.edu/
 
->  ***如果下载下来的数据是VCF 格式，可以用 bcftools query 提取需要的 data fileds，生成 TXT 格式。bcftools query 的使用，请参考 http://samtools.github.io/bcftools/bcftools.html ***
+>  ***如果下载下来的数据是VCF 格式，可以用 bcftools query 提取需要的 data fileds，生成 TXT 格式。bcftools query 的使用，请参考 http://samtools.github.io/bcftools/bcftools.html***
 
 <br/>
 

@@ -9,12 +9,12 @@
 
 ## #1.1 HAPMAP3 genotype 数据, 一般作为 LD 计算的 reference panel
 
-### 打开 https://www.broadinstitute.org/medical-and-population-genetics/hapmap-3， 
-### 点击 How To Download This Release 下面的 A. SNP Genotype Data 段落的中间3个链接。
-### 文件名字里面有 "b36"，现在一般都用 b37（比如 UK Biobank），甚至有的用 b38，
-### 所以下载后解压后需要将那个 .map 文件先用 liftOver 转化为 b37 格式，然后用 PLINK 生成 bed/bim/fam 文件。
-### 这一步已经完成，生成的 PLINK 格式文件已经放到百度网盘，请大家下载。
-### 这个基因数据将作为我们组进行 LDSC 和 GSMR 分析的标准文件。
+> 打开 https://www.broadinstitute.org/medical-and-population-genetics/hapmap-3， 
+> 点击 How To Download This Release 下面的 A. SNP Genotype Data 段落的中间3个链接。
+> 文件名字里面有 "b36"，现在一般都用 b37（比如 UK Biobank），甚至有的用 b38，
+> 所以下载后解压后需要将那个 .map 文件先用 liftOver 转化为 b37 格式，然后用 PLINK 生成 bed/bim/fam 文件。
+> 这一步已经完成，生成的 PLINK 格式文件已经放到百度网盘，请大家下载。  
+> 这个基因数据将作为我们组进行 LDSC 和 GSMR 分析的标准文件。
 <br/>
 
 ## #1.2. 1000 genomes (千人基因组) genotype 数据， 一般作为 imputation 的 reference panel.
@@ -33,15 +33,10 @@
 > 后续跑 GWAS 或提取 PRS 的时候，也是每条染色体的数据分开来跑，这样就可以进行并行计算（parallel computing）。
 > 一般不建议把所有的染色体的数据合并成一个完整的单一的基因数据，毕竟将近一个亿的SNP，文件太大了，很多软件根本运行不了。
 
-```
-
-其实，PLINK的网站上也有千人基因组的数据，点击左下方菜单“1000 genomes phase3” 链接，按照操作下载和处理。
-不管是哪个方法得到的PLINK格式的数据，有的软件不允许 .bim 文件里面的 SNP 名字有重复，这个时候可以用下面的命令来处理
-
-```
-cp chr1.bim chr1.bim.COPY
-awk '{if(array[$2]=="Y") {i++; $2=$2".DUP"i}; print $0; array[$2]="Y"}' chr1.bim.COPY > chr1.bim 
-```
+> 其实，PLINK的网站上也有千人基因组的数据，点击左下方菜单“1000 genomes phase3” 链接，按照操作下载和处理。
+> 不管是哪个方法得到的PLINK格式的数据，有的软件不允许 .bim 文件里面的 SNP 名字有重复，这个时候可以用下面的命令来处理
+> > cp chr1.bim chr1.bim.COPY
+> > awk '{if(array[$2]=="Y") {i++; $2=$2".DUP"i}; print $0; array[$2]="Y"}' chr1.bim.COPY > chr1.bim 
 <br/>
 
 

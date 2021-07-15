@@ -131,13 +131,13 @@ WINDOWS电脑建议安装系统自带的 Ubuntu Linux系统，然后用 cd /mnt/
 > > - 英国爱丁堡大学：geneatlas: http://geneatlas.roslin.ed.ac.uk
 
 > 日本生物样本库的 GWAS：http://jenger.riken.jp/en/result 
-> > ***对于这上面的每一个表型，点击最后一列，查看曼哈顿图和QQ图，然后点击那个页面上的 Download summary statistics。否则，前面一页的 download 下来的数据没有 rsID***
+> > ***对于这上面的每一个表型，点击最后一列，查看曼哈顿图和QQ图，然后点击那个页面上的 Download summary statistics。否则，前面一页的 download 下来的数据没有 rsID ***
 
 > 各大专项疾病领域的GWAS，比如：
 > > - 哈佛大学的CVD knowlege portal: https://hugeamp.org/
 > > - 南加州大学的神经影像基因组国际合作团队：http://enigma.ini.usc.edu/
 
-> ***如果下载下来的数据是VCF 格式，可以用 bcftools query 提取需要的 data fileds，生成 TXT 格式。bcftools query 的使用，请参考 http://samtools.github.io/bcftools/bcftools.html ***
+>  ***如果下载下来的数据是VCF 格式，可以用 bcftools query 提取需要的 data fileds，生成 TXT 格式。bcftools query 的使用，请参考 http://samtools.github.io/bcftools/bcftools.html ***
 
 <br/>
 

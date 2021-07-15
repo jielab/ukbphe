@@ -44,13 +44,15 @@
 
 ![UKB](./pictures/ukb.png)
 
-## #2.1 首先要明确，UKB的基因数据很大，所有申请者都能得到一样的数据（样本的ID不一样），一般下载到服务器上去储存和使用。
-但是，对于基因型的 summary statistics，是可以人人免费下载的。UKB里面的将近一亿个 SNP 的 rsID, CHR, POS, MAF等信息，就可以点击上面这个页面上的 Imputation，然后弹出来的页面上会有下面这句话：
-The information scores and minor allele frequency data for the imputed genotypes (computed with QCTOOL) can also be downloaded in Resource 1967。点击链接下载就行了。
+## #2.1 关于UKB 基因数据
+> 首先要明确，UKB的基因数据很大，所有申请者都能得到一样的数据（样本的ID不一样），一般下载到服务器上去储存和使用。
+> 但是，对于基因型的 summary statistics，是可以人人免费下载的。
+> UKB里面的将近一亿个 SNP 的 rsID, CHR, POS, MAF等信息，可以点击上面这个页面上的 Imputation，然后弹出来的页面上会有下面这句话：
+> > The information scores and minor allele frequency data for the imputed genotypes (computed with QCTOOL) can also be downloaded in Resource 1967。
+> 点击链接下载就行了。
 
-对于表型数据的提取，有人做了一个 ukbtools 的R软件包，https://kenhanscombe.github.io/ukbtools/articles/explore-ukb-data.html。
-但我觉得不是太好用，并且很慢。可以参考这个，用两种不同的方法来提取数据，进行比较。
-<br/>
+> 对于表型数据的提取，有人做了一个 ukbtools 的R软件包，https://kenhanscombe.github.io/ukbtools/articles/explore-ukb-data.html。
+> 但我觉得不是太好用，并且很慢。可以参考这个，用两种不同的方法来提取数据，进行比较。
 <br/>
 
 ## #2.2 只有一列或者少数计列的一般表型（age, sex, race, bmi, etc.）

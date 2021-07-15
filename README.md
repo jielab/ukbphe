@@ -59,7 +59,6 @@ WINDOWS电脑建议安装系统自带的 Ubuntu Linux系统，然后用 cd /mnt/
 打开ukbiobank.ac.uk, 点击 Data Showcase 菜单。然后点击第一个“Essential Information”，阅读 Access and using your data。
 读完整个文档的话，你就什么都知道了。苹果电脑，参考 https://github.com/spiros/docker-ukbiobank-utils
 
-
 1. 先解压表型数据的大文件
     - unkunpack ukb42156.enc 48?0?6475f14648f8a114?5279c06b64a78aa70454efb55b00cc1510e5?db372
 
@@ -72,40 +71,38 @@ WINDOWS电脑建议安装系统自带的 Ubuntu Linux系统，然后用 cd /mnt/
 4. 确认没有重复的 data-field
     - sort ukb.vip.fields.id | uniq -d
 
-4. 提前VIP 文件里面列出的变量
+5. 提前VIP 文件里面列出的变量
     - ukbconv ukb42156.enc_ukb r -iukb.vip.fields.id -ovip
 	
-5. 打开R ，用下面的几行代码，将上面生成的 vip.tab 数据读入，并且给每个变量赋予正确的名字。
+6. 打开R ，用下面的几行代码，将上面生成的 vip.tab 数据读入，并且给每个变量赋予正确的名字。
     - source("D:/vip.r")
     - pnames <- read.table("D:/ukb.vip.fields", header=F)
     - pnames$V1 <- paste0("f.", pnames$V1, ".0.0")
     - phe <- subset(bd, select=grep("f.eid|\\.0\\.0", names(bd)))
 
-6. 上述Linux 系统生成的 vip.r文件，如果在Windows 系统里面运行R，需要将里面的 /mnt/d 改为 D:/。
+7. 上述Linux 系统生成的 vip.r文件，如果在Windows 系统里面运行R，需要将里面的 /mnt/d 改为 D:/。
 <br/>
+
 
 ## #2.3 跨越很多列的数据，比如 ICD (data field 42170）
 
-```
-# ICD 这样的指标，包含了很多不同时间的时间点，量很大，建议分开来处理。
-ukbconv ukb42156.enc_ukb r -s42170 -oicd
-sed -i 's/"//g icd.tab
+> ICD 这样的指标，包含了很多不同时间的时间点，量很大，建议分开来处理。
+> > ukbconv ukb42156.enc_ukb r -s42170 -oicd
+> > sed -i 's/"//g icd.tab
 
-# 将 icd.tab 文件整合为两列，便于读入R。
-cat icd.tab | sed -e 's/\tNA//g' -e 's/\t/,/2g' | \
-awk '{ if(NR==1) print "IID icd"; else if (NF==1) print $1 " NA"; else print $0"," }' > icd.2cols
-```
+> 将 icd.tab 文件整合为两列，便于读入R。
+> > cat icd.tab | sed -e 's/\tNA//g' -e 's/\t/,/2g' | \
+> > awk '{ if(NR==1) print "IID icd"; else if (NF==1) print $1 " NA"; else print $0"," }' > icd.2cols
 <br/>
 
 ## #2.4. 对表型数据进行 GWAS 运行之前的处理
 
-提取需要研究的表型数据和相关的covariates，比如 age, sex, PCs。一般来说，quantitative的表型数据要 adjust for covariates 和转化成正态分布，这个可以在R里面用下面的命令来实现。
-对于疾病的binary 表型，只需要把需要 adjust 的covarites 和表型数据放在同一个表型数据文件里面，然后在 GWAS里面的命令指明哪个是表型，哪些是 covariates。
-
-```
-trait_res = residuals(lm(trait ~ age+sex+PC1+PC2, na.action=na.exclude)
-trait_inv = qnorm((rank(trait_res,na.last="keep")-0.5) / length(na.omit(trait_res)))
-```
+> 提取需要研究的表型数据和相关的covariates，比如 age, sex, PCs。
+> 一般来说，quantitative的表型数据要 adjust for covariates 和转化成正态分布，这个可以在R里面用下面的命令来实现。
+> > trait_res = residuals(lm(trait ~ age+sex+PC1+PC2, na.action=na.exclude)
+> > trait_inv = qnorm((rank(trait_res,na.last="keep")-0.5) / length(na.omit(trait_res)))
+> 对于疾病的binary 表型，只需要把需要 adjust 的covarites 和表型数据放在同一个表型数据文件里面，
+> 然后在 GWAS里面的命令指明哪个是表型，哪些是 covariates。
 <br/>
 
 
@@ -115,20 +112,17 @@ trait_inv = qnorm((rank(trait_res,na.last="keep")-0.5) / length(na.omit(trait_re
 <br/>
 
 ## #3.1 专人在服务器上运行
-目前GWAS 由专人负责运行，一般来说就是通过下面这样的PLINK命令来跑
-
-```
-for chr in {1..22}; do
-   plink2 --memory 12000 --threads 16 --pfile ukb/imp/chr$chr --extract ukb.chr$chr.good.snps --pheno pheno/cvd.EUR.pheno --no-psam-pheno --pheno-name XXX --1 --glm cols=+ax,+a1freq,+a1freqcc,+a1count,+a1countcc,+beta,+orbeta,+nobs hide-covar no-x-sex --covar pheno/ukb.cov --covar-name age,sex,PC1-PC10 --out chr$chr
-```
-
-上述命令顺利跑完后，确认生成的文件没有问题后，可以把所有的染色体的数据串到一起，形成一个单一的 XXX.gwas.gz 文件。鉴于2千多万个SNP，文件太大，我们一般只保留：P<0.01的SNP 以及那些在Hapmap3 里面的SNP。最终合并成的 XXX.gwas.gz 文件用 TAB 分割，CHR:POS 排好序，要不然 LocusZoom 那样的软件不能处理。也可以用 tabix -f -S 1 -s 1 -b 2 -e 2 XXX.gwas.gz 对数据进行索引，便于 LocalZoom 那样的软件去处理。
+> 目前GWAS 由专人负责运行，一般来说就是通过下面这样的PLINK命令来跑
+> > for chr in {1..22}; do
+    - plink2 --memory 12000 --threads 16 --pfile chr$chr --extract ukb.chr$chr.good.snps --pheno cvd.EUR.pheno --no-psam-pheno --pheno-name XXX \ 
+	- --1 --glm cols=+ax,+a1freq,+a1freqcc,+a1count,+a1countcc,+beta,+orbeta,+nobs hide-covar no-x-sex --covar pheno/ukb.cov --covar-name age,sex,PC1-PC10 --out chr$chr
+> 上述命令顺利跑完后，确认生成的文件没有问题后，可以把所有的染色体的数据串到一起，形成一个单一的 XXX.gwas.gz 文件。鉴于2千多万个SNP，文件太大，我们一般只保留：P<0.01的SNP 以及那些在Hapmap3 里面的SNP。最终合并成的 XXX.gwas.gz 文件用 TAB 分割，CHR:POS 排好序，要不然 LocusZoom 那样的软件不能处理。也可以用 tabix -f -S 1 -s 1 -b 2 -e 2 XXX.gwas.gz 对数据进行索引，便于 LocalZoom 那样的软件去处理。
 <br/>
 
 ## #3.2 公开的GWAS数据进行练手，或对比
 
-如果下载下来的数据是VCF 格式，可以用 bcftools query 提取需要的 data fileds，生成 TXT 格式。
-bcftools query 的使用，请参考 http://samtools.github.io/bcftools/bcftools.html
+> 如果下载下来的数据是VCF 格式，可以用 bcftools query 提取需要的 data fileds，生成 TXT 格式。
+> bcftools query 的使用，请参考 http://samtools.github.io/bcftools/bcftools.html
  
 ```
 最经典的，历史悠久的 GWAS Catalog: https://www.ebi.ac.uk/gwas
